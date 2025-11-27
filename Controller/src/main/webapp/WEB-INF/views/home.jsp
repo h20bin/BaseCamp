@@ -149,7 +149,7 @@
                     로그인
                 </a>
                 
-                <a href="/signup" class="btn-signup" style="background-color: #3182f6 !important; color: white !important;">
+                <a href="/member/signup" class="btn-signup" style="background-color: #3182f6 !important; color: white !important;">
                     회원가입
                 </a>
             </div>
