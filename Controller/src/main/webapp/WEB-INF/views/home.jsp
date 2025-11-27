@@ -49,7 +49,7 @@
         .user-welcome {
             font-weight: 600;
             font-size: 15px;
-            color: #191f28;
+            color: #191f28
             margin-right: 10px;
         }
         .user-welcome span {

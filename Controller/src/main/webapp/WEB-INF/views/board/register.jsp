@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basecamp - 회원가입</title>
+    <title>Basecamp - 게시글 작성</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,9 +41,9 @@
             gap: 8px;
         }
 
-        /* 메인 컨테이너 */
+        /* 메인 컨테이너 (글쓰기용으로 폭을 조금 더 넓힘) */
         .container-main {
-            max-width: 600px;
+            max-width: 800px;
             margin: 50px auto;
             padding: 0 20px;
         }
@@ -86,10 +86,10 @@
             box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1);
         }
 
-        .helper-text {
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-top: 5px;
+        /* 텍스트 에어리어 높이 조정 */
+        textarea.form-control {
+            min-height: 300px;
+            resize: none;
         }
 
         /* 버튼 영역 */
@@ -128,14 +128,6 @@
             display: inline-block;
         }
         .btn-cancel:hover { background-color: #e5e8eb; color: black; }
-        
-        /* 알림 메시지 영역 */
-        .alert-msg {
-            color: #e03131;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
 
     </style>
 </head>
@@ -155,44 +147,32 @@
     <div class="container-main">
         
         <div class="form-card">
-            <h2 class="page-title">회원가입</h2>
+            <h2 class="page-title">게시글 작성</h2>
 
-            <% if(request.getAttribute("msg") != null) { %>
-                <div class="alert-msg">
-                    <i class="fa-solid fa-circle-exclamation"></i> ${msg}
-                </div>
-            <% } %>
-
-            <form action="/member/signup" method="post">
+            <form action="/board/register" method="post">
                 
                 <div class="mb-4">
-                    <label for="userId" class="form-label">아이디</label>
-                    <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력해 주세요." required>
+                    <label for="title" class="form-label">제목</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력해 주세요." required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="userPw" class="form-label">비밀번호</label>
-                    <input type="password" class="form-control" id="userPw" name="userPw" placeholder="비밀번호를 입력해 주세요." required>
-                    <div class="helper-text">* 특수문자 포함 8자리 이상 입력해주세요.</div>
+                    <label for="writer" class="form-label">작성자</label>
+                    <input type="text" class="form-control" id="writer" name="writer" placeholder="작성자 이름" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="userName" class="form-label">이름</label>
-                    <input type="text" class="form-control" id="userName" name="userName" placeholder="이름을 입력해 주세요." required>
-                </div>
-
-                <div class="mb-4">
-                    <label for="userEmail" class="form-label">이메일</label>
-                    <input type="email" class="form-control" id="userEmail" name="email" placeholder="example@email.com">
+                    <label for="content" class="form-label">내용</label>
+                    <textarea class="form-control" id="content" name="content" placeholder="내용을 자유롭게 작성해 주세요."></textarea>
                 </div>
 
                 <div class="row g-2 mt-4">
-                    <div class="col-6">
-                        <a href="/" class="btn-custom btn-cancel">취소</a>
+                    <div class="col-3">
+                        <a href="/board/list" class="btn-custom btn-cancel">취소</a>
                     </div>
-                    <div class="col-6">
+                    <div class="col-9">
                         <button type="submit" class="btn-custom btn-submit">
-                            가입하기
+                            등록하기
                         </button>
                     </div>
                 </div>
