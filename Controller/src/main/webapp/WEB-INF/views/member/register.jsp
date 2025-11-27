@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basecamp - 새 글 쓰기</title>
+    <title>Basecamp - 회원가입</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,7 +43,7 @@
 
         /* 메인 컨테이너 */
         .container-main {
-            max-width: 800px;
+            max-width: 600px;
             margin: 50px auto;
             padding: 0 20px;
         }
@@ -63,6 +63,7 @@
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 2px solid var(--text-main);
+            text-align: center;
         }
 
         /* 입력 필드 커스텀 */
@@ -85,6 +86,12 @@
             box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1);
         }
 
+        .helper-text {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 5px;
+        }
+
         /* 버튼 영역 */
         .btn-area {
             display: flex;
@@ -94,36 +101,41 @@
         }
         
         .btn-custom {
-            padding: 10px 24px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 15px;
             border: none;
             text-decoration: none;
             transition: 0.2s;
+            cursor: pointer;
         }
 
         /* 등록 버튼 */
         .btn-submit {
             background-color: var(--primary-color);
             color: white;
+            width: 100%;
         }
         .btn-submit:hover { background-color: #1b64da; color: white; }
 
-        /* 목록 버튼 (취소 역할) */
-        .btn-list {
+        /* 취소 버튼 */
+        .btn-cancel {
             background-color: #f2f4f6;
             color: var(--text-main);
+            width: 100%;
+            text-align: center;
+            display: inline-block;
         }
-        .btn-list:hover { background-color: #e5e8eb; color: black; }
-
-        /* 초기화 버튼 */
-        .btn-reset {
-            background-color: #fff0f0;
+        .btn-cancel:hover { background-color: #e5e8eb; color: black; }
+        
+        /* 알림 메시지 영역 */
+        .alert-msg {
             color: #e03131;
-            margin-right: 10px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .btn-reset:hover { background-color: #ffe3e3; }
 
     </style>
 </head>
@@ -135,7 +147,7 @@
                 <i class="fa-solid fa-baseball-bat-ball"></i> Basecamp
             </a>
             <div class="ms-auto">
-                <a href="#" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+                <a href="/member/login" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
             </div>
         </div>
     </nav>
@@ -143,36 +155,44 @@
     <div class="container-main">
         
         <div class="form-card">
-            <h2 class="page-title">새 글 쓰기</h2>
+            <h2 class="page-title">회원가입</h2>
 
-            <form action="/board/register" method="post">
+            <% if(request.getAttribute("msg") != null) { %>
+                <div class="alert-msg">
+                    <i class="fa-solid fa-circle-exclamation"></i> ${msg}
+                </div>
+            <% } %>
+
+            <form action="/member/signup" method="post">
                 
                 <div class="mb-4">
-                    <label for="title" class="form-label">제목</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력해 주세요." required>
+                    <label for="userId" class="form-label">아이디</label>
+                    <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력해 주세요." required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="writer" class="form-label">작성자</label>
-                    <input type="text" class="form-control" id="writer" name="writer" placeholder="작성자 이름" required>
+                    <label for="userPw" class="form-label">비밀번호</label>
+                    <input type="password" class="form-control" id="userPw" name="userPw" placeholder="비밀번호를 입력해 주세요." required>
+                    <div class="helper-text">* 특수문자 포함 8자리 이상 입력해주세요.</div>
                 </div>
 
                 <div class="mb-4">
-                    <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" id="content" name="content" rows="12" placeholder="자유롭게 내용을 작성해 주세요." required></textarea>
+                    <label for="userName" class="form-label">이름</label>
+                    <input type="text" class="form-control" id="userName" name="userName" placeholder="이름을 입력해 주세요." required>
                 </div>
 
-                <div class="btn-area">
-                    <a href="/board/list" class="btn-custom btn-list">
-                        <i class="fa-solid fa-list"></i> 목록
-                    </a>
+                <div class="mb-4">
+                    <label for="userEmail" class="form-label">이메일</label>
+                    <input type="email" class="form-control" id="userEmail" name="email" placeholder="example@email.com">
+                </div>
 
-                    <div>
-                        <button type="reset" class="btn-custom btn-reset">
-                            <i class="fa-solid fa-rotate-left"></i> 초기화
-                        </button>
+                <div class="row g-2 mt-4">
+                    <div class="col-6">
+                        <a href="/" class="btn-custom btn-cancel">취소</a>
+                    </div>
+                    <div class="col-6">
                         <button type="submit" class="btn-custom btn-submit">
-                            <i class="fa-solid fa-paper-plane"></i> 등록
+                            가입하기
                         </button>
                     </div>
                 </div>

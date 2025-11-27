@@ -1,5 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page session="true" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -31,7 +31,7 @@
         .navbar-brand {
             font-weight: 900;
             font-size: 26px;
-            color: #3182f6 !important; /* 파란색 강제 적용 */
+            color: #3182f6 !important;
             letter-spacing: -0.5px;
             display: flex;
             align-items: center;
@@ -45,8 +45,20 @@
             align-items: center;
         }
 
-        /* 로그인 버튼 */
-        .btn-login {
+        /* 유저 환영 문구 */
+        .user-welcome {
+            font-weight: 600;
+            font-size: 15px;
+            color: #191f28;
+            margin-right: 10px;
+        }
+        .user-welcome span {
+            color: #3182f6; /* 이름 강조 */
+            font-weight: 800;
+        }
+
+        /* 버튼 스타일들 */
+        .btn-ghost {
             color: #333 !important;
             font-weight: 600;
             font-size: 15px;
@@ -54,12 +66,13 @@
             border: none;
             padding: 8px 12px;
             text-decoration: none;
+            transition: color 0.2s;
         }
+        .btn-ghost:hover { color: #3182f6 !important; }
         
-        /* 회원가입 버튼 (강제 스타일 적용) */
-        .btn-signup {
-            background-color: #3182f6 !important; /* 무조건 파란색 */
-            color: #ffffff !important;             /* 무조건 흰색 글씨 */
+        .btn-primary-fill {
+            background-color: #3182f6 !important; 
+            color: #ffffff !important;           
             font-weight: 600;
             font-size: 15px;
             padding: 10px 24px;
@@ -67,8 +80,10 @@
             border: none;
             text-decoration: none;
             box-shadow: 0 2px 5px rgba(49, 130, 246, 0.3);
-            display: inline-block; /* 박스 형태 유지 */
+            display: inline-block;
+            transition: background-color 0.2s;
         }
+        .btn-primary-fill:hover { background-color: #1b64da !important; }
 
         /* 메인 컨테이너 */
         .main-container {
@@ -100,6 +115,7 @@
             position: relative;
             width: 100%;
             max-width: 580px;
+            margin-bottom: 30px;
         }
         .search-input {
             width: 100%;
@@ -110,6 +126,7 @@
             background: white;
             font-size: 17px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s;
         }
         .search-input:focus {
             outline: none;
@@ -128,6 +145,19 @@
             cursor: pointer;
         }
 
+        /* 바로가기 링크 */
+        .quick-link {
+            font-size: 14px;
+            color: #8b95a1;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .quick-link:hover {
+            color: #3182f6;
+            border-bottom-color: #3182f6;
+        }
+
         footer {
             text-align: center;
             font-size: 12px;
@@ -140,28 +170,47 @@
 
     <nav class="navbar navbar-expand">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <i class="fa-solid fa-baseball-bat-ball"></i> Basecamp
             </a>
 
             <div class="ms-auto btn-auth-group">
-                <a href="/login" class="btn-login">
-                    로그인
-                </a>
-                
-                <a href="/member/signup" class="btn-signup" style="background-color: #3182f6 !important; color: white !important;">
-                    회원가입
-                </a>
+                <c:choose>
+                    <%-- 1. 로그인이 안 된 상태 --%>
+                    <c:when test="${empty loginUser}">
+                        <a href="/member/login" class="btn-ghost">로그인</a>
+                        <a href="/member/signup" class="btn-primary-fill">회원가입</a>
+                    </c:when>
+
+                    <%-- 2. 로그인 된 상태 --%>
+                    <c:otherwise>
+                        <span class="user-welcome">
+                            <!-- [수정됨] .name -> .userName -->
+                            <span>${loginUser.userName}</span>님, 환영합니다!
+                        </span>
+                        <a href="/member/logout" class="btn-ghost">로그아웃</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </nav>
 
     <div class="main-container">
+        
         <h1 class="main-title">
             모든 야구 기록을<br>한 곳에서 검색하세요
         </h1>
+        
         <p class="main-subtitle">
-            KBO 선수, 구단, 경기 데이터를 쉽고 빠르게 찾아보세요.
+            <c:choose>
+                <c:when test="${not empty loginUser}">
+                    <!-- [수정됨] .name -> .userName -->
+                    ${loginUser.userName}님, 오늘은 어떤 기록이 궁금하신가요?
+                </c:when>
+                <c:otherwise>
+                    KBO 선수, 구단, 경기 데이터를 쉽고 빠르게 찾아보세요.
+                </c:otherwise>
+            </c:choose>
         </p>
 
         <form action="/search" method="get" class="search-box-wrapper">
@@ -170,6 +219,12 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </form>
+
+        <div>
+            <a href="/board/list" class="quick-link">
+                <i class="fa-solid fa-list-ul"></i> 자유게시판 바로가기
+            </a>
+        </div>
     </div>
 
     <footer>

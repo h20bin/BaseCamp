@@ -12,4 +12,8 @@ public class MemberVO {
     private Date regDate;       // 등록일
     private Date updateDate;    // 수정일
     private boolean enabled;    // 계정 활성화 여부
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

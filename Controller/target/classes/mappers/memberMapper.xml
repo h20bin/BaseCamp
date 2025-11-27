@@ -13,4 +13,10 @@
     <select id="read" resultType="org.mnu.domain.MemberVO">
         SELECT * FROM TBL_MEMBER WHERE USERID = #{userId}
     </select>
+    
+    <select id="login" resultType="org.mnu.domain.MemberVO">
+        SELECT * FROM TBL_MEMBER 
+        WHERE USERID = #{userId} AND USERPW = #{userPw}
+    </select>
+
 </mapper>

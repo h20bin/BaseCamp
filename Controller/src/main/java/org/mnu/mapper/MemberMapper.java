@@ -7,5 +7,7 @@ public interface MemberMapper {
     public void insertMember(MemberVO member);
 
     // 중복 아이디 체크 또는 회원 정보 읽기
-    public MemberVO read(String userId); 
+    public MemberVO read(String userId);
+
+	public MemberVO login(MemberVO member); 
 }
