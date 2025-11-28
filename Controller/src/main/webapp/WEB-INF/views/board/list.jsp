@@ -64,31 +64,26 @@
             font-weight: 800;
         }
 
-        /* [수정됨] 글쓰기 버튼 - 강제 파란색 적용 */
+        /* 글쓰기 버튼 */
         .btn-write-custom {
-            background-color: #3182f6 !important; /* 무조건 파란색 */
-            color: white !important;             /* 무조건 흰색 글씨 */
+            background-color: #3182f6 !important; 
+            color: white !important;             
             border: none !important;
             padding: 12px 25px !important;
             font-size: 16px !important;
             font-weight: bold !important;
             border-radius: 8px !important;
             text-decoration: none !important;
-            display: inline-block !important;    /* 박스 형태 유지 */
+            display: inline-block !important;   
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             line-height: normal !important;
         }
-        
         .btn-write-custom:hover {
-            background-color: #1b64da !important; /* 마우스 올리면 진한 파랑 */
+            background-color: #1b64da !important; 
             color: white !important;
             transform: translateY(-2px);
         }
-        
-        /* 아이콘 간격 조정 */
-        .btn-write-custom i {
-            margin-right: 5px;
-        }
+        .btn-write-custom i { margin-right: 5px; }
 
         /* 게시판 테이블 스타일 */
         .board-card {
@@ -99,10 +94,7 @@
             border: 1px solid var(--border-color);
         }
         
-        .table {
-            margin-bottom: 0;
-            border-collapse: collapse;
-        }
+        .table { margin-bottom: 0; border-collapse: collapse; }
         .table thead th {
             background-color: #f9fafb;
             color: var(--text-sub);
@@ -131,33 +123,44 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .title-link:hover {
-            color: var(--primary-color);
-        }
+        .title-link:hover { color: var(--primary-color); }
 
-        /* 페이지네이션 */
+        /* =========================================
+           [수정됨] 페이지네이션 스타일 (강제 적용)
+           ========================================= */
         .pagination {
             justify-content: center;
             margin-top: 40px;
-            gap: 5px;
+            gap: 8px;
         }
-        .page-item .page-link {
-            border: none;
-            border-radius: 8px;
-            color: var(--text-sub);
-            font-weight: 500;
-            padding: 8px 16px;
-            background: transparent;
+        
+        /* 1. 기본 버튼 (선택 안 된 것) */
+        .pagination .page-item .page-link {
+            background-color: #ffffff !important;   /* 배경 흰색 */
+            color: #333333 !important;              /* 글자 검은색 */
+            border: 1px solid #dee2e6 !important;   /* 테두리 회색 */
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            padding: 8px 16px !important;
         }
-        .page-item.active .page-link {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 700;
-            box-shadow: 0 4px 10px rgba(49, 130, 246, 0.3);
+
+        /* 2. 현재 선택된 페이지 (1번 등) - 여기가 문제였음 */
+        .pagination .page-item.active .page-link {
+            background-color: #3182f6 !important;   /* 배경 파란색 (강제) */
+            border-color: #3182f6 !important;       /* 테두리 파란색 */
+            color: #ffffff !important;              /* 글자 흰색 (강제) */
+            z-index: 3 !important;                  /* 제일 위로 올림 */
+            box-shadow: 0 4px 10px rgba(49, 130, 246, 0.4) !important;
         }
-        .page-item .page-link:hover:not(.active) {
-            background-color: #f1f3f5;
-            color: var(--text-main);
+
+        /* 3. 마우스 올렸을 때 */
+        .pagination .page-item .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #3182f6 !important;
+        }
+        .pagination .page-item.active .page-link:hover {
+            background-color: #1b64da !important;
+            color: #ffffff !important;
         }
 
         @media (max-width: 768px) {
