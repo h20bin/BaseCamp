@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -41,7 +43,7 @@
             gap: 8px;
         }
 
-        /* 메인 컨테이너 (글쓰기용으로 폭을 조금 더 넓힘) */
+        /* 메인 컨테이너 */
         .container-main {
             max-width: 800px;
             margin: 50px auto;
@@ -138,8 +140,19 @@
             <a class="navbar-brand" href="/">
                 <i class="fa-solid fa-baseball-bat-ball"></i> Basecamp
             </a>
-            <div class="ms-auto">
-                <a href="/member/login" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+            <div class="ms-auto d-flex align-items-center">
+                <c:choose>
+                    <c:when test="${empty loginUser}">
+                        <a href="/member/login" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+                        <a href="/member/signup" class="btn btn-primary btn-sm fw-bold">회원가입</a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="me-3 fw-bold text-dark">
+                            ${loginUser.userName}님, 환영합니다!
+                        </span>
+                        <a href="/member/logout" class="btn btn-outline-secondary btn-sm">로그아웃</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </nav>
@@ -158,7 +171,8 @@
 
                 <div class="mb-4">
                     <label for="writer" class="form-label">작성자</label>
-                    <input type="text" class="form-control" id="writer" name="writer" placeholder="작성자 이름" required>
+                    <input type="text" class="form-control" id="writer" name="writer" 
+                           value="${loginUser.userName}" readonly>
                 </div>
 
                 <div class="mb-4">

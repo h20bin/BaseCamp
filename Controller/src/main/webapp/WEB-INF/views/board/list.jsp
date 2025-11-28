@@ -28,10 +28,10 @@
             color: var(--text-main);
         }
 
-        /* 내비게이션 바 (홈화면과 동일) */
+        /* 내비게이션 바 */
         .navbar {
             padding: 15px 40px;
-            background-color: white; /* 게시판은 본문이 길어서 흰 배경 권장 */
+            background-color: white;
             border-bottom: 1px solid var(--border-color);
         }
         .navbar-brand {
@@ -46,7 +46,7 @@
 
         /* 메인 컨테이너 */
         .container-main {
-            max-width: 1000px; /* 게시판은 넓게 */
+            max-width: 1000px;
             margin: 50px auto;
             padding: 0 20px;
         }
@@ -56,27 +56,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            height: 50px; 
         }
         .page-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 800;
         }
 
-        /* 글쓰기 버튼 */
-        .btn-write {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: 0.2s;
-            border: none;
+        /* [수정됨] 글쓰기 버튼 - 강제 파란색 적용 */
+        .btn-write-custom {
+            background-color: #3182f6 !important; /* 무조건 파란색 */
+            color: white !important;             /* 무조건 흰색 글씨 */
+            border: none !important;
+            padding: 12px 25px !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            display: inline-block !important;    /* 박스 형태 유지 */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            line-height: normal !important;
         }
-        .btn-write:hover {
-            background-color: #1b64da;
-            color: white;
+        
+        .btn-write-custom:hover {
+            background-color: #1b64da !important; /* 마우스 올리면 진한 파랑 */
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        /* 아이콘 간격 조정 */
+        .btn-write-custom i {
+            margin-right: 5px;
         }
 
         /* 게시판 테이블 스타일 */
@@ -84,7 +95,7 @@
             background: white;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            overflow: hidden; /* 모서리 둥글게 유지 */
+            overflow: hidden;
             border: 1px solid var(--border-color);
         }
         
@@ -96,20 +107,19 @@
             background-color: #f9fafb;
             color: var(--text-sub);
             font-weight: 600;
-            font-size: 13px;
-            padding: 16px;
+            font-size: 14px;
+            padding: 18px 16px;
             border-bottom: 1px solid var(--border-color);
             border-top: none;
         }
         .table tbody td {
-            padding: 16px;
+            padding: 18px 16px;
             vertical-align: middle;
             font-size: 15px;
             border-bottom: 1px solid var(--border-color);
             color: var(--text-main);
         }
         
-        /* 제목 링크 스타일 */
         .title-link {
             text-decoration: none;
             color: var(--text-main);
@@ -125,7 +135,7 @@
             color: var(--primary-color);
         }
 
-        /* 페이지네이션 커스텀 */
+        /* 페이지네이션 */
         .pagination {
             justify-content: center;
             margin-top: 40px;
@@ -150,7 +160,6 @@
             color: var(--text-main);
         }
 
-        /* 반응형: 모바일에서 불필요한 컬럼 숨기기 */
         @media (max-width: 768px) {
             .col-viewcnt, .col-regdate { display: none; }
             .title-link { max-width: 200px; }
@@ -164,8 +173,19 @@
             <a class="navbar-brand" href="/">
                 <i class="fa-solid fa-baseball-bat-ball"></i> Basecamp
             </a>
-            <div class="ms-auto">
-                <a href="#" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+            <div class="ms-auto d-flex align-items-center">
+                <c:choose>
+                    <c:when test="${empty loginUser}">
+                        <a href="/member/login" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+                        <a href="/member/signup" class="btn btn-primary btn-sm fw-bold">회원가입</a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="me-3 fw-bold text-dark">
+                            ${loginUser.userName}님
+                        </span>
+                        <a href="/member/logout" class="btn btn-outline-secondary btn-sm">로그아웃</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </nav>
@@ -174,9 +194,12 @@
         
         <div class="page-header">
             <h2 class="page-title">자유게시판</h2>
-            <a href="/board/register" class="btn-write">
-                <i class="fa-solid fa-pen"></i> 글쓰기
-            </a>
+            
+            <c:if test="${not empty loginUser}">
+                <a href="/board/register" class="btn-write-custom">
+                    <i class="fa-solid fa-pen"></i> 글쓰기
+                </a>
+            </c:if>
         </div>
 
         <div class="board-card">
@@ -214,7 +237,6 @@
 
         <nav aria-label="Page navigation">
             <ul class="pagination">
-                
                 <c:if test="${pageMaker.prev}">
                     <li class="page-item">
                         <a class="page-link" href="/board/list?page=${pageMaker.startPage - 1}" aria-label="Previous">
@@ -236,16 +258,13 @@
                         </a>
                     </li>
                 </c:if>
-
             </ul>
         </nav>
-
     </div>
 
     <script>
         var result = '${result}';
         if (result && result !== '' && !isNaN(result)) {
-            // alert 대신 조금 더 부드러운 방식도 좋지만, 일단 기능 유지를 위해 alert 사용
             alert(result + "번 글이 성공적으로 등록되었습니다.");
         }
     </script>
