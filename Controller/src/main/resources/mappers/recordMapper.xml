@@ -6,15 +6,23 @@
 <mapper namespace="org.mnu.mapper.RecordMapper">
 
     <select id="getTeamRank" resultType="org.mnu.domain.TeamVO">
-        SELECT team_id, team_name, rank_no, wins, draws, losses, win_rate, team_avg
+        SELECT 
+            team_id as teamId, 
+            team_name as teamName, 
+            rank_no as rankNo, 
+            wins, draws, losses, 
+            win_rate as winRate, 
+            team_avg as teamAvg
         FROM TEAM
+        WHERE team_id != 'T9999'
         ORDER BY rank_no ASC
     </select>
 
     <select id="getBatterRank" resultType="org.mnu.domain.BatterVO">
         SELECT 
-            b.player_id, b.name, b.position, b.avg, b.homerun, b.runs, b.rbi,
-            t.team_name
+            b.player_id as playerId, 
+            b.name, b.position, b.avg, b.homerun, b.runs, b.rbi,
+            t.team_name as teamName
         FROM BATTER b
         JOIN TEAM t ON b.team_id = t.team_id
         ORDER BY b.avg DESC
@@ -22,8 +30,9 @@
 
     <select id="getPitcherRank" resultType="org.mnu.domain.PitcherVO">
         SELECT 
-            p.player_id, p.name, p.wins, p.losses, p.strikeouts, p.innings, p.era,
-            t.team_name
+            p.player_id as playerId, 
+            p.name, p.wins, p.losses, p.strikeouts, p.innings, p.era,
+            t.team_name as teamName
         FROM PITCHER p
         JOIN TEAM t ON p.team_id = t.team_id
         ORDER BY p.era ASC
@@ -31,38 +40,39 @@
     
     <select id="getAllTeams" resultType="org.mnu.domain.TeamVO">
         SELECT 
-            TEAM_ID, 
-            TEAM_NAME,
-            RANK_NO,  
+            TEAM_ID as teamId, 
+            TEAM_NAME as teamName,
+            RANK_NO as rankNo,  
             WINS,     
             DRAWS,    
             LOSSES,   
-            WIN_RATE, 
-            TEAM_AVG 
+            WIN_RATE as winRate, 
+            TEAM_AVG as teamAvg 
         FROM TEAM
+        WHERE TEAM_ID != 'T9999'
         ORDER BY TEAM_NAME ASC
     </select>
 
-	<select id="getAllPlayers" resultType="org.mnu.domain.PlayerDTO">
+    <select id="getAllPlayers" resultType="org.mnu.domain.PlayerDTO">
         SELECT 
-            T1.PLAYER_ID, 
+            T1.PLAYER_ID as playerId, 
             T1.NAME, 
-            T2.TEAM_NAME, 
-            '타자' AS PLAYER_TYPE 
+            T2.TEAM_NAME as teamName, 
+            '타자' AS playerType 
         FROM BATTER T1
         JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
 
         UNION ALL
 
         SELECT 
-            T1.PLAYER_ID, 
+            T1.PLAYER_ID as playerId, 
             T1.NAME, 
-            T2.TEAM_NAME, 
-            '투수' AS PLAYER_TYPE 
+            T2.TEAM_NAME as teamName, 
+            '투수' AS playerType 
         FROM PITCHER T1
         JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
 
         ORDER BY NAME ASC
-	</select>
+    </select>
 
 </mapper>
