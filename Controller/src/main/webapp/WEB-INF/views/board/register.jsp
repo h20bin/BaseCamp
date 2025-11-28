@@ -171,9 +171,13 @@
 
                 <div class="mb-4">
                     <label for="writer" class="form-label">작성자</label>
-                    <input type="text" class="form-control" id="writer" name="writer" 
+                    
+                    <input type="text" class="form-control" id="writer" 
                            value="${loginUser.userName}" readonly>
-                </div>
+                           
+                    <input type="hidden" name="userId" value="${loginUser.userId}">
+                    
+                    </div>
 
                 <div class="mb-4">
                     <label for="content" class="form-label">내용</label>

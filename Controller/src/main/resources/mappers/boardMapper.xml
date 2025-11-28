@@ -11,7 +11,7 @@
         ORDER BY POST_ID DESC
         OFFSET #{pageStart} ROWS FETCH NEXT #{perPageNum} ROWS ONLY
         ]]>
-        </select>
+    </select>
 
     <select id="getTotalCount" resultType="int">
         <![CDATA[
@@ -24,7 +24,7 @@
             select SEQ_BOARD.nextval from dual
         </selectKey>
         INSERT INTO BOARD (POST_ID, title, content, USER_ID)
-        VALUES (#{bno}, #{title}, #{content}, #{writer})
+        VALUES (#{bno}, #{title}, #{content}, #{userId})
     </insert>
 
     <select id="read" resultType="org.mnu.domain.BoardVO">
@@ -41,10 +41,9 @@
         UPDATE BOARD
         SET title = #{title},
             content = #{content},
-            USER_ID = #{writer},
             updateDate = SYSDATE
         WHERE POST_ID = #{bno}
-        </update>
+    </update>
 
     <update id="updateViewCnt">
         UPDATE BOARD SET VIEWS = VIEWS + 1 WHERE POST_ID = #{bno}
