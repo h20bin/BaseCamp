@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.mnu.mapper.RecordMapper">
+
+    <select id="getTeamRank" resultType="org.mnu.domain.TeamVO">
+        SELECT team_id, team_name, rank_no, wins, draws, losses, win_rate, team_avg
+        FROM TEAM
+        ORDER BY rank_no ASC
+    </select>
+
+    <select id="getBatterRank" resultType="org.mnu.domain.BatterVO">
+        SELECT 
+            b.player_id, b.name, b.position, b.avg, b.homerun, b.runs, b.rbi,
+            t.team_name
+        FROM BATTER b
+        JOIN TEAM t ON b.team_id = t.team_id
+        ORDER BY b.avg DESC
+    </select>
+
+    <select id="getPitcherRank" resultType="org.mnu.domain.PitcherVO">
+        SELECT 
+            p.player_id, p.name, p.wins, p.losses, p.strikeouts, p.innings, p.era,
+            t.team_name
+        FROM PITCHER p
+        JOIN TEAM t ON p.team_id = t.team_id
+        ORDER BY p.era ASC
+    </select>
+    
+    <select id="getAllTeams" resultType="org.mnu.domain.TeamVO">
+        SELECT 
+            TEAM_ID, 
+            TEAM_NAME,
+            RANK_NO,  
+            WINS,     
+            DRAWS,    
+            LOSSES,   
+            WIN_RATE, 
+            TEAM_AVG 
+        FROM TEAM
+        ORDER BY TEAM_NAME ASC
+    </select>
+
+	<select id="getAllPlayers" resultType="org.mnu.domain.PlayerDTO">
+        SELECT 
+            T1.PLAYER_ID, 
+            T1.NAME, 
+            T2.TEAM_NAME, 
+            '타자' AS PLAYER_TYPE 
+        FROM BATTER T1
+        JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
+
+        UNION ALL
+
+        SELECT 
+            T1.PLAYER_ID, 
+            T1.NAME, 
+            T2.TEAM_NAME, 
+            '투수' AS PLAYER_TYPE 
+        FROM PITCHER T1
+        JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
+
+        ORDER BY NAME ASC
+	</select>
+
+</mapper>

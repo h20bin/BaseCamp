@@ -6,17 +6,24 @@
 <mapper namespace="org.mnu.mapper.MemberMapper">
 
     <insert id="insertMember">
-        INSERT INTO TBL_MEMBER (USERID, USERPW, USERNAME, EMAIL, ENABLED)
-        VALUES (#{userId}, #{userPw}, #{userName}, #{email}, 1)
+        INSERT INTO USER_INFO (USER_ID, PASSWORD, NAME, NICKNAME, EMAIL, PHONE, FAV_TEAM_ID)
+        VALUES (#{userId}, #{userPw}, #{userName}, #{nickName}, #{email}, #{phone}, #{favTeamId})
     </insert>
 
     <select id="read" resultType="org.mnu.domain.MemberVO">
-        SELECT * FROM TBL_MEMBER WHERE USERID = #{userId}
+        SELECT 
+            USER_ID as userId, PASSWORD as userPw, NAME as userName, NICKNAME as nickName, 
+            EMAIL, PHONE, FAV_TEAM_ID as favTeamId
+        FROM USER_INFO 
+        WHERE USER_ID = #{userId}
     </select>
     
     <select id="login" resultType="org.mnu.domain.MemberVO">
-        SELECT * FROM TBL_MEMBER 
-        WHERE USERID = #{userId} AND USERPW = #{userPw}
+        SELECT 
+            USER_ID as userId, PASSWORD as userPw, NAME as userName, NICKNAME as nickName, 
+            EMAIL, PHONE, FAV_TEAM_ID as favTeamId
+        FROM USER_INFO 
+        WHERE USER_ID = #{userId} AND PASSWORD = #{userPw}
     </select>
 
 </mapper>

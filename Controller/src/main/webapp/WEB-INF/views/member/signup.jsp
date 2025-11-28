@@ -18,7 +18,7 @@
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); }
         .container-signup { max-width: 450px; margin: 50px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .form-title { font-size: 28px; font-weight: 800; margin-bottom: 30px; text-align: center; }
-        .form-control { border-radius: 8px; padding: 12px; margin-bottom: 15px; }
+        .form-control, .form-select { border-radius: 8px; padding: 12px; margin-bottom: 15px; } /* form-select 추가 */
         .btn-signup-submit { background-color: var(--primary-color); color: white; font-weight: 700; padding: 12px; border-radius: 8px; }
         .btn-signup-submit:hover { background-color: #1b64da; color: white; }
     </style>
@@ -48,9 +48,52 @@
                 <input type="text" name="userName" id="userName" class="form-control" required placeholder="이름">
             </div>
             
+            <div class="mb-3">
+                <label for="nickName" class="form-label">닉네임</label>
+                <input type="text" name="nickName" id="nickName" class="form-control" required placeholder="사이트에서 사용할 닉네임">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">이메일</label>
+                <input type="email" name="email" id="email" class="form-control" required placeholder="이메일 주소">
+            </div>
+
             <div class="mb-4">
-                <label for="email" class="form-label">이메일 (선택)</label>
-                <input type="email" name="email" id="email" class="form-control" placeholder="이메일 주소">
+                <label for="phone" class="form-label">휴대폰 번호</label>
+                <input type="text" name="phone" id="phone" class="form-control" required placeholder="010-xxxx-xxxx">
+            </div>
+
+            <div class="mb-4">
+                <label for="favTeamId" class="form-label">관심 구단 (선택)</label>
+                <select name="favTeamId" id="favTeamId" class="form-select">
+                    <option value="T9999" selected>-- 선택 안함 --</option> 
+                    <c:forEach items="${teamList}" var="team">
+                        <option value="${team.teamId}">${team.teamName}</option>
+                    </c:forEach>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label">관심 선수 3명 (선택)</label>
+                <select name="favPlayerId1" class="form-select mb-2">
+                    <option value="" selected>-- 관심 선수 1 (선택 안함) --</option>
+                    <c:forEach items="${playerList}" var="player">
+                        <option value="${player.playerId}">[${player.teamName} - ${player.playerType}] ${player.name}</option>
+                    </c:forEach>
+                </select>
+                <select name="favPlayerId2" class="form-select mb-2">
+                    <option value="" selected>-- 관심 선수 2 (선택 안함) --</option>
+                    <c:forEach items="${playerList}" var="player">
+                        <option value="${player.playerId}">[${player.teamName} - ${player.playerType}] ${player.name}</option>
+                    </c:forEach>
+                </select>
+                <select name="favPlayerId3" class="form-select">
+                    <option value="" selected>-- 관심 선수 3 (선택 안함) --</option>
+                    <c:forEach items="${playerList}" var="player">
+                        <option value="${player.playerId}">[${player.teamName} - ${player.playerType}] ${player.name}</option>
+                    </c:forEach>
+                </select>
+                <div class="form-text text-muted" style="font-size: 13px;">선택한 선수 ID는 USER_INTERESTS 테이블에 저장됩니다.</div>
             </div>
 
             <button type="submit" class="btn btn-signup-submit w-100">가입 완료</button>
