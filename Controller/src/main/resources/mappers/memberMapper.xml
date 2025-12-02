@@ -42,4 +42,16 @@
         WHERE USER_ID = #{userId} AND PASSWORD = #{userPw}
     </delete>
 
+    <insert id="insertWithdrawal">
+        INSERT INTO WITHDRAWAL_HISTORY (USER_ID, REASON)
+        VALUES (#{userId}, #{reason})
+    </insert>
+
+    <select id="checkRejoinRestriction" resultType="int">
+        SELECT COUNT(*) 
+        FROM WITHDRAWAL_HISTORY 
+        WHERE USER_ID = #{userId} 
+          AND WITHDRAWAL_DATE > SYSDATE - 90
+    </select>
+
 </mapper>

@@ -87,4 +87,30 @@
         WHERE team_id = #{favTeamId}
     </select>
 
+    <select id="getInterestPlayers" resultType="org.mnu.domain.PlayerDTO">
+        SELECT 
+            b.name, 
+            t.team_name as teamName, 
+            '타자' as playerType, 
+            '타율' as statLabel, 
+            to_char(b.avg, '0.000') as statValue
+        FROM USER_INTERESTS ui
+        JOIN BATTER b ON ui.player_id = b.player_id
+        JOIN TEAM t ON b.team_id = t.team_id
+        WHERE ui.user_id = #{userId}
+        
+        UNION ALL
+        
+        SELECT 
+            p.name, 
+            t.team_name as teamName, 
+            '투수' as playerType, 
+            '평균자책점' as statLabel, 
+            to_char(p.era, '0.00') as statValue
+        FROM USER_INTERESTS ui
+        JOIN PITCHER p ON ui.player_id = p.player_id
+        JOIN TEAM t ON p.team_id = t.team_id
+        WHERE ui.user_id = #{userId}
+    </select>
+
 </mapper>

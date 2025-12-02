@@ -24,4 +24,8 @@ public interface RecordMapper {
 
     // [수정됨] @Param을 붙여서 XML의 #{favTeamId}와 정확히 연결해줍니다.
     public TeamVO getTeam(@Param("favTeamId") String favTeamId);
+ // 맨 아래에 추가
+    public List<PlayerDTO> getInterestPlayers1(String userId);
+
+	public List<PlayerDTO> getInterestPlayers(String userId);
 }

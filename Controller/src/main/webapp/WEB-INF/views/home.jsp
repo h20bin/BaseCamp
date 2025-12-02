@@ -12,58 +12,42 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
-        /* 기본 설정 */
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: #f9fafb;
-            color: #191f28;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 내비게이션 바 */
+        body { font-family: 'Pretendard', sans-serif; background-color: #f9fafb; color: #191f28; height: 100vh; display: flex; flex-direction: column; }
         .navbar { padding: 15px 40px; background-color: transparent; }
         .navbar-brand { font-weight: 900; font-size: 26px; color: #3182f6 !important; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
-
-        /* 버튼 그룹 (상단) */
         .btn-auth-group { display: flex; gap: 10px; align-items: center; }
-
-        /* 유저 환영 문구 */
         .user-welcome { font-weight: 600; font-size: 15px; color: #191f28; margin-right: 10px; }
         .user-welcome span { color: #3182f6; font-weight: 800; }
-
-        /* 상단 로그인/가입 버튼 스타일 */
         .btn-ghost { color: #333 !important; font-weight: 600; font-size: 15px; background: transparent; border: none; padding: 8px 12px; text-decoration: none; transition: color 0.2s; }
         .btn-ghost:hover { color: #3182f6 !important; }
-        
         .btn-primary-fill { background-color: #3182f6 !important; color: #ffffff !important; font-weight: 600; font-size: 15px; padding: 10px 24px; border-radius: 8px; border: none; text-decoration: none; box-shadow: 0 2px 5px rgba(49, 130, 246, 0.3); display: inline-block; transition: background-color 0.2s; }
         .btn-primary-fill:hover { background-color: #1b64da !important; }
-
-        /* 메인 컨테이너 (가운데 정렬) */
         .main-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-top: -40px; }
-
         .main-title { font-size: 46px; font-weight: 800; margin-bottom: 20px; color: #191f28; line-height: 1.3; letter-spacing: -1px; }
         .main-subtitle { font-size: 18px; color: #8b95a1; margin-bottom: 50px; line-height: 1.6; }
-
-        /* ▼▼▼ 새로 추가된 메인 버튼 스타일 ▼▼▼ */
         .action-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .btn-lg-custom { padding: 18px 36px; font-size: 18px; border-radius: 16px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 12px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.05); min-width: 220px; justify-content: center; }
-
-        /* 버튼 1: 파란색 (기록) */
         .btn-blue { background-color: #3182f6; color: white; border: 1px solid #3182f6; }
         .btn-blue:hover { background-color: #1b64da; color: white; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(49, 130, 246, 0.3); }
-
-        /* 버튼 2: 흰색/회색 (게시판) */
         .btn-white { background-color: white; color: #191f28; border: 1px solid #e5e8eb; }
         .btn-white:hover { background-color: #f9fafb; color: #3182f6; border-color: #3182f6; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-
-        /* 팀 정보 카드 스타일 (추가됨) */
-        .team-card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 600px; margin-bottom: 50px; }
+        
+        /* 팀 정보 카드 스타일 */
+        .team-card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 600px; margin-bottom: 30px; }
         .team-stat-item { flex: 1; }
         .team-stat-label { font-size: 14px; color: #8b95a1; margin-bottom: 5px; }
         .team-stat-value { font-size: 32px; font-weight: 800; color: #191f28; }
         .team-stat-divider { width: 1px; height: 50px; background-color: #e5e8eb; margin: 0 20px; }
+
+        /* 선수 정보 카드 스타일 (추가됨) */
+        .player-cards-wrapper { display: flex; gap: 20px; justify-content: center; margin-bottom: 50px; flex-wrap: wrap; }
+        .player-card { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 220px; text-align: left; border: 1px solid #e5e8eb; transition: transform 0.2s; }
+        .player-card:hover { transform: translateY(-5px); }
+        .player-team { font-size: 13px; color: #8b95a1; margin-bottom: 5px; font-weight: 600; }
+        .player-name { font-size: 20px; font-weight: 800; color: #191f28; margin-bottom: 15px; }
+        .player-stat-row { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #f2f4f6; padding-top: 15px; }
+        .stat-label { font-size: 13px; color: #6b7684; font-weight: 600; }
+        .stat-value { font-size: 22px; font-weight: 800; color: #3182f6; }
 
         footer { text-align: center; font-size: 12px; color: #ddd; padding: 20px; }
     </style>
@@ -78,16 +62,14 @@
 
             <div class="ms-auto btn-auth-group">
                 <c:choose>
-                    <%-- 1. 로그인이 안 된 상태 --%>
                     <c:when test="${empty loginUser}">
                         <a href="/member/login" class="btn-ghost">로그인</a>
                         <a href="/member/signup" class="btn-primary-fill">회원가입</a>
                     </c:when>
 
-                    <%-- 2. 로그인 된 상태 --%>
                     <c:otherwise>
                         <span class="user-welcome">
-                            <span>${loginUser.userName}</span>님, 환영합니다!
+                            <span>${loginUser.nickName}</span>님, 환영합니다!
                         </span>
                         <a href="/member/logout" class="btn-ghost">로그아웃</a>
                     </c:otherwise>
@@ -99,11 +81,12 @@
     <div class="main-container">
         
         <c:choose>
-            <%-- Case 1: 로그인 했고 + 관심 구단 정보(myTeam)가 있을 때 --%>
+            <%-- Case 1: 로그인 + 관심구단(myTeam) 정보 있음 --%>
             <c:when test="${not empty loginUser and not empty myTeam}">
+                
                 <div class="mb-4">
                     <span class="badge bg-primary bg-opacity-10 text-primary mb-2 rounded-pill px-3 py-2 fw-bold">MY TEAM</span>
-                    <h1 class="main-title" style="font-size: 40px;">
+                    <h1 class="main-title" style="font-size: 40px; margin-bottom: 10px;">
                         ${myTeam.teamName}의 오늘 기록
                     </h1>
                 </div>
@@ -131,9 +114,30 @@
                         </a>
                     </div>
                 </div>
+
+                <c:if test="${not empty myPlayers}">
+                    <div class="mb-4 mt-5">
+                        <span class="badge bg-success bg-opacity-10 text-success mb-2 rounded-pill px-3 py-2 fw-bold">MY PLAYERS</span>
+                        <h2 class="fw-bold" style="font-size: 28px;">나의 관심 선수</h2>
+                    </div>
+
+                    <div class="player-cards-wrapper">
+                        <c:forEach var="player" items="${myPlayers}">
+                            <div class="player-card">
+                                <div class="player-team">${player.teamName} · ${player.playerType}</div>
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-stat-row">
+                                    <span class="stat-label">${player.statLabel}</span>
+                                    <span class="stat-value">${player.statValue}</span>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:if>
+
             </c:when>
 
-            <%-- Case 2: 로그인 안 했거나 관심 구단이 없을 때 --%>
+            <%-- Case 2: 로그인 안 함 or 관심구단 없음 --%>
             <c:otherwise>
                 <h1 class="main-title">
                     야구 데이터와 커뮤니티가<br>
@@ -143,7 +147,7 @@
                 <p class="main-subtitle">
                     <c:choose>
                         <c:when test="${not empty loginUser}">
-                            ${loginUser.userName}님, 관심 구단을 설정하시면<br>
+                            ${loginUser.nickName}님, 관심 구단을 설정하시면<br>
                             메인 화면에서 바로 팀 기록을 확인할 수 있습니다.
                         </c:when>
                         <c:otherwise>
@@ -164,7 +168,6 @@
                 <i class="fa-solid fa-comments"></i> 자유게시판 바로가기
             </a>
 
-            <%-- 로그인 시 '내 정보 수정' 버튼 추가 --%>
             <c:if test="${not empty loginUser}">
                 <a href="/member/modify" class="btn-lg-custom btn-white" style="color:#555;">
                     <i class="fa-solid fa-gear"></i> 내 정보 수정

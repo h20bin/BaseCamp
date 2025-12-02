@@ -20,4 +20,8 @@ public interface RecordService {
 
     // ▼▼▼ [수정] 반드시 TeamVO여야 합니다 (Object X) ▼▼▼
     public TeamVO getTeam(String favTeamId);
+ // 맨 아래에 추가
+    public List<PlayerDTO> getInterestPlayers1(String userId);
+
+	public Object getInterestPlayers(String userId);
 }

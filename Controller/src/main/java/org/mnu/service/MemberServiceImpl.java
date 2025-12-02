@@ -64,5 +64,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void remove(String userId) {
         // 이 프로젝트에서는 MemberVO를 받는 remove를 사용하므로 비워둡니다.
+    	
     }
 }

@@ -23,30 +23,34 @@ public class HomeController {
     
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
     
-    // 관심 구단 정보를 가져오기 위해 RecordService 주입
     @Setter(onMethod_ = @Autowired)
     private RecordService recordService;
     
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home(Locale locale, Model model, HttpSession session) {
-        logger.info("Welcome home! The client locale is {}.", locale);
+        logger.info("메인 화면 진입");
         
         Date date = new Date();
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         String formattedDate = dateFormat.format(date);
         model.addAttribute("serverTime", formattedDate );
         
-        // [추가 기능] 로그인한 사용자라면 -> 관심 구단 정보를 가져온다.
+        // [로그인 시 관심 데이터(구단, 선수) 가져오기]
         MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
         
-        if (loginUser != null && loginUser.getFavTeamId() != null) {
+        if (loginUser != null) {
             try {
-                // RecordService에 getTeam(String teamId) 메서드가 있어야 함
                 if(recordService != null) {
-                    model.addAttribute("myTeam", recordService.getTeam(loginUser.getFavTeamId()));
+                    // 1. 관심 구단 정보 가져오기
+                    if(loginUser.getFavTeamId() != null) {
+                        model.addAttribute("myTeam", recordService.getTeam(loginUser.getFavTeamId()));
+                    }
+                    
+                    // 2. ▼▼▼ [추가됨] 관심 선수 목록 가져오기 ▼▼▼
+                    model.addAttribute("myPlayers", recordService.getInterestPlayers(loginUser.getUserId()));
                 }
             } catch (Exception e) {
-                logger.error("관심 구단 로드 오류: " + e.getMessage());
+                logger.error("데이터 로드 오류: " + e.getMessage());
             }
         }
         

@@ -17,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor 
 public class RecordServiceImpl implements RecordService {
 
-    // @AllArgsConstructor 덕분에 생성자 주입 자동 처리
     private final RecordMapper mapper;
 
     @Override
@@ -50,10 +49,22 @@ public class RecordServiceImpl implements RecordService {
         return mapper.getAllPlayers();
     }
 
-    // ▼▼▼ [수정] 인터페이스와 동일하게 TeamVO 반환 ▼▼▼
     @Override
     public TeamVO getTeam(String favTeamId) {
         log.info("관심 구단 정보 조회 서비스: " + favTeamId);
         return mapper.getTeam(favTeamId);
     }
+
+    // ▼▼▼ [추가됨] 관심 선수 목록 조회 구현 ▼▼▼
+    @Override
+    public List<PlayerDTO> getInterestPlayers(String userId) {
+        log.info("관심 선수 목록 조회 서비스: " + userId);
+        return mapper.getInterestPlayers(userId);
+    }
+
+	@Override
+	public List<PlayerDTO> getInterestPlayers1(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

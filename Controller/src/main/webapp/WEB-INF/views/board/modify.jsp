@@ -13,120 +13,23 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
-        :root {
-            --primary-color: #3182f6;
-            --bg-color: #f9fafb;
-            --text-main: #191f28;
-            --text-sub: #8b95a1;
-            --border-color: #e5e8eb;
-        }
-
-        body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-        }
-
-        /* 내비게이션 바 */
-        .navbar {
-            padding: 15px 40px;
-            background-color: white;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .navbar-brand {
-            font-weight: 900;
-            font-size: 24px;
-            color: var(--primary-color) !important;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* 메인 컨테이너 */
-        .container-main {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
-
-        /* 폼 카드 스타일 */
-        .form-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            padding: 40px;
-            border: 1px solid var(--border-color);
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--text-main);
-        }
-
-        /* 입력 필드 커스텀 */
-        .form-label {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-        
-        .form-control {
-            border-radius: 8px;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1);
-        }
-        
-        /* 읽기 전용 필드 (작성자) */
-        .form-control[readonly] {
-            background-color: #f2f4f6;
-            color: var(--text-sub);
-            border-color: #eee;
-            cursor: not-allowed;
-        }
-
-        /* 버튼 영역 */
-        .btn-area {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 30px;
-        }
-        
-        .btn-custom {
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 15px;
-            border: none;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-
-        /* 저장 버튼 */
-        .btn-save {
-            background-color: var(--primary-color);
-            color: white;
-        }
+        :root { --primary-color: #3182f6; --bg-color: #f9fafb; --text-main: #191f28; --text-sub: #8b95a1; --border-color: #e5e8eb; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); color: var(--text-main); }
+        .navbar { padding: 15px 40px; background-color: white; border-bottom: 1px solid var(--border-color); }
+        .navbar-brand { font-weight: 900; font-size: 24px; color: var(--primary-color) !important; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+        .container-main { max-width: 800px; margin: 50px auto; padding: 0 20px; }
+        .form-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 40px; border: 1px solid var(--border-color); }
+        .page-title { font-size: 24px; font-weight: 800; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid var(--text-main); }
+        .form-label { font-weight: 600; font-size: 15px; color: var(--text-main); margin-bottom: 8px; }
+        .form-control { border-radius: 8px; padding: 12px 15px; border: 1px solid #ddd; font-size: 15px; transition: all 0.2s; }
+        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1); }
+        .form-control[readonly] { background-color: #f2f4f6; color: var(--text-sub); border-color: #eee; cursor: not-allowed; }
+        .btn-area { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+        .btn-custom { padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 15px; border: none; text-decoration: none; transition: 0.2s; }
+        .btn-save { background-color: var(--primary-color); color: white; }
         .btn-save:hover { background-color: #1b64da; color: white; }
-
-        /* 취소 버튼 */
-        .btn-cancel {
-            background-color: #f2f4f6;
-            color: var(--text-main);
-        }
+        .btn-cancel { background-color: #f2f4f6; color: var(--text-main); }
         .btn-cancel:hover { background-color: #e5e8eb; color: black; }
-
     </style>
 </head>
 <body>
@@ -136,9 +39,26 @@
             <a class="navbar-brand" href="/">
                 <i class="fa-solid fa-baseball-bat-ball"></i> Basecamp
             </a>
-            <div class="ms-auto">
-                <a href="#" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+            
+            <%-- ▼▼▼ [수정된 부분] 닉네임 표시 및 로그아웃 버튼 ▼▼▼ --%>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <c:choose>
+                    <c:when test="${not empty loginUser}">
+                        <span class="fw-bold text-dark">
+                            👋 ${loginUser.nickName}님 
+                        </span>
+                        <a href="/member/logout" class="btn btn-sm btn-outline-secondary fw-bold">
+                            로그아웃
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="/member/login" class="text-decoration-none text-muted fw-bold">
+                            로그인
+                        </a>
+                    </c:otherwise>
+                </c:choose>
             </div>
+            
         </div>
     </nav>
 
