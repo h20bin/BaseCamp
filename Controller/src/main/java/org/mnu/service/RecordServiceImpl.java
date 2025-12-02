@@ -17,7 +17,7 @@ import lombok.extern.log4j.Log4j2;
 @AllArgsConstructor 
 public class RecordServiceImpl implements RecordService {
 
-    // @AllArgsConstructor 덕분에 자동으로 주입됩니다.
+    // @AllArgsConstructor 덕분에 생성자 주입 자동 처리
     private final RecordMapper mapper;
 
     @Override
@@ -38,23 +38,22 @@ public class RecordServiceImpl implements RecordService {
         return mapper.getPitcherRank();
     }
     
-    // [회원가입용] 전체 구단 목록 조회
     @Override
     public List<TeamVO> getAllTeams() {
         log.info("회원가입용 구단 목록 조회 (Service)");
         return mapper.getAllTeams();
     }
     
-    // [회원가입용] 전체 선수 목록 조회
     @Override
     public List<PlayerDTO> getAllPlayers() { 
         log.info("회원가입용 선수 목록 조회 (Service)");
         return mapper.getAllPlayers();
     }
 
-	@Override
-	public Object getTeam(String favTeamId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    // ▼▼▼ [수정] 인터페이스와 동일하게 TeamVO 반환 ▼▼▼
+    @Override
+    public TeamVO getTeam(String favTeamId) {
+        log.info("관심 구단 정보 조회 서비스: " + favTeamId);
+        return mapper.getTeam(favTeamId);
+    }
 }

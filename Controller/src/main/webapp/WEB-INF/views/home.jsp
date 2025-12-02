@@ -112,7 +112,7 @@
                     <div class="d-flex justify-content-between align-items-center text-center">
                         <div class="team-stat-item">
                             <div class="team-stat-label">현재 순위</div>
-                            <div class="team-stat-value">${myTeam.rank}위</div>
+                            <div class="team-stat-value">${myTeam.rankNo}위</div>
                         </div>
                         <div class="team-stat-divider"></div>
                         <div class="team-stat-item">
@@ -121,8 +121,8 @@
                         </div>
                         <div class="team-stat-divider"></div>
                         <div class="team-stat-item">
-                            <div class="team-stat-label">최근 10경기</div>
-                            <div class="team-stat-value">${myTeam.recentRecord}</div>
+                            <div class="team-stat-label">팀 타율</div>
+                            <div class="team-stat-value">${myTeam.teamAvg}</div>
                         </div>
                     </div>
                     <div class="mt-4 pt-4 border-top text-center">

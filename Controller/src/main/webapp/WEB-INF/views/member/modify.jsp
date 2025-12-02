@@ -22,13 +22,12 @@
 </head>
 <body>
 
+    <c:if test="${not empty msg}">
+        <script>alert("${msg}");</script>
+    </c:if>
+
     <div class="edit-card">
         <h3 class="text-center fw-bold mb-4">내 정보 수정</h3>
-
-        <%-- 비밀번호 불일치 등의 메시지가 있으면 표시 --%>
-        <c:if test="${not empty msg}">
-            <div class="alert alert-danger text-center small p-2 mb-3">${msg}</div>
-        </c:if>
 
         <form action="/member/modify" method="post">
             <div class="mb-3">
@@ -64,7 +63,7 @@
             <div class="mb-4">
                 <label class="form-label">관심 구단</label>
                 <select name="favTeamId" class="form-select">
-                    <option value="">선택 안함</option>
+                    <option value="T9999">선택 안함</option>
                     <c:forEach var="team" items="${teamList}">
                         <option value="${team.teamId}" ${loginUser.favTeamId == team.teamId ? 'selected' : ''}>
                             ${team.teamName}
@@ -95,15 +94,34 @@
                     <h5 class="modal-title fw-bold text-danger">정말 탈퇴하시겠습니까?</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                
                 <div class="modal-body">
-                    <p class="text-muted small">탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.<br>본인 확인을 위해 비밀번호를 입력해주세요.</p>
+                    <p class="text-danger fw-bold small text-center mb-3">탈퇴 시 3개월간 재가입이 제한됩니다.</p>
+                    
                     <form id="deleteForm" action="/member/remove" method="post">
-                        <input type="password" name="userPw" class="form-control" placeholder="비밀번호 입력" required>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">탈퇴 사유</label>
+                            <select name="withdrawalReason" class="form-select" required>
+                                <option value="" disabled selected>사유를 선택해주세요</option>
+                                <option value="이용빈도 낮음">잘 사용하지 않아요</option>
+                                <option value="서비스 불만">서비스 이용이 불편해요</option>
+                                <option value="개인정보 보호">개인정보 보호를 위해</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">비밀번호 확인</label>
+                            <input type="password" name="userPw" class="form-control" placeholder="본인 확인을 위해 비밀번호 입력" required>
+                        </div>
+
                     </form>
                 </div>
+                
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-danger fw-bold" onclick="document.getElementById('deleteForm').submit()">탈퇴 확인</button>
+                    <button type="button" class="btn btn-danger fw-bold" onclick="submitDeleteForm()">탈퇴 확인</button>
                 </div>
             </div>
         </div>
@@ -114,6 +132,18 @@
         function showDeleteModal() {
             var myModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             myModal.show();
+        }
+
+        // 폼 유효성 검사 후 제출
+        function submitDeleteForm() {
+            var form = document.getElementById('deleteForm');
+            if(form.checkValidity()) {
+                if(confirm('정말로 탈퇴하시겠습니까? 돌이킬 수 없습니다.')) {
+                    form.submit();
+                }
+            } else {
+                form.reportValidity(); // 필수 입력 항목 알림
+            }
         }
     </script>
 </body>

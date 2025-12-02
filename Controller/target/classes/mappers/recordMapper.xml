@@ -43,9 +43,9 @@
             TEAM_ID as teamId, 
             TEAM_NAME as teamName,
             RANK_NO as rankNo,  
-            WINS,     
-            DRAWS,    
-            LOSSES,   
+            WINS,      
+            DRAWS,     
+            LOSSES,    
             WIN_RATE as winRate, 
             TEAM_AVG as teamAvg 
         FROM TEAM
@@ -73,6 +73,18 @@
         JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
 
         ORDER BY NAME ASC
+    </select>
+
+    <select id="getTeam" resultType="org.mnu.domain.TeamVO">
+        SELECT 
+            team_id as teamId, 
+            team_name as teamName, 
+            rank_no as rankNo, 
+            wins, draws, losses, 
+            win_rate as winRate, 
+            team_avg as teamAvg
+        FROM TEAM
+        WHERE team_id = #{favTeamId}
     </select>
 
 </mapper>

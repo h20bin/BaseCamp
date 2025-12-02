@@ -13,12 +13,11 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <style>
-        /* CSS는 list.jsp 또는 home.jsp의 스타일을 참고하여 적용합니다. */
         :root { --primary-color: #3182f6; --bg-color: #f9fafb; --text-main: #191f28; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); }
         .container-signup { max-width: 450px; margin: 50px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .form-title { font-size: 28px; font-weight: 800; margin-bottom: 30px; text-align: center; }
-        .form-control, .form-select { border-radius: 8px; padding: 12px; margin-bottom: 15px; } /* form-select 추가 */
+        .form-control, .form-select { border-radius: 8px; padding: 12px; margin-bottom: 15px; }
         .btn-signup-submit { background-color: var(--primary-color); color: white; font-weight: 700; padding: 12px; border-radius: 8px; }
         .btn-signup-submit:hover { background-color: #1b64da; color: white; }
     </style>
@@ -31,6 +30,13 @@
             Basecamp 회원가입
         </h2>
 
+        <%-- ▼▼▼ [추가됨] Controller에서 보낸 실패 메시지가 있으면 경고창 띄우기 ▼▼▼ --%>
+        <c:if test="${not empty msg}">
+            <script>
+                alert("${msg}");
+            </script>
+        </c:if>
+
         <form action="/member/signup" method="post"> 
             
             <div class="mb-3">
@@ -40,7 +46,7 @@
 
             <div class="mb-3">
                 <label for="userPw" class="form-label">비밀번호</label>
-                <input type="password" name="userPw" id="userPw" class="form-control" required placeholder="비밀번호">
+                <input type="password" name="userPw" id="userPw" class="form-control" required placeholder="8자리 이상, 특수문자 포함">
             </div>
 
             <div class="mb-3">
@@ -66,7 +72,7 @@
             <div class="mb-4">
                 <label for="favTeamId" class="form-label">관심 구단 (선택)</label>
                 <select name="favTeamId" id="favTeamId" class="form-select">
-                    <option value="T9999" selected>-- 선택 안함 --</option> 
+                    <option value="" selected>-- 선택 안함 --</option> 
                     <c:forEach items="${teamList}" var="team">
                         <option value="${team.teamId}">${team.teamName}</option>
                     </c:forEach>
