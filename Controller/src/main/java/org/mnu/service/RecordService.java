@@ -12,4 +12,5 @@ public interface RecordService {
     public List<PitcherVO> getPitcherRankings();
     public List<TeamVO> getAllTeams();
     public List<PlayerDTO> getAllPlayers();
+	public Object getTeam(String favTeamId);
 }

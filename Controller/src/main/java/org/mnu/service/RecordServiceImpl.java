@@ -51,4 +51,10 @@ public class RecordServiceImpl implements RecordService {
         log.info("회원가입용 선수 목록 조회 (Service)");
         return mapper.getAllPlayers();
     }
+
+	@Override
+	public Object getTeam(String favTeamId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

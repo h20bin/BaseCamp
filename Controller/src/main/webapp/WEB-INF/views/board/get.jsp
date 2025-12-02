@@ -144,10 +144,28 @@
             <a class="navbar-brand" href="/">
                 <i class="fa-solid fa-baseball-bat-ball"></i> Basecamp
             </a>
-            <div class="ms-auto">
-                <a href="#" class="text-decoration-none text-muted fw-bold me-3">로그인</a>
+            
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <c:choose>
+                    <%-- 로그인 했을 때 --%>
+                    <c:when test="${not empty loginUser}">
+                        <span class="fw-bold text-dark">
+                            👋 ${loginUser.userName}님 
+                        </span>
+                        <a href="/member/logout" class="btn btn-sm btn-outline-secondary fw-bold">
+                            로그아웃
+                        </a>
+                    </c:when>
+                    
+                    <%-- 로그인 안 했을 때 --%>
+                    <c:otherwise>
+                        <a href="/member/login" class="text-decoration-none text-muted fw-bold">
+                            로그인
+                        </a>
+                    </c:otherwise>
+                </c:choose>
             </div>
-        </div>
+            </div>
     </nav>
 
     <div class="container-main">

@@ -10,4 +10,9 @@ public interface MemberService {
 
     // 로그인
     public MemberVO login(MemberVO member);
+
+	public void remove(String userId);
+	public void remove(MemberVO member);
+
+	void modify(MemberVO member);
 }
