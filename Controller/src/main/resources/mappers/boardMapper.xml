@@ -2,51 +2,101 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
 <mapper namespace="org.mnu.mapper.BoardMapper">
+
+    <sql id="criteria">
+        <trim prefix="(" suffix=") AND " prefixOverrides="OR">
+            <foreach item="type" collection="typeArr">
+                <trim prefix="OR">
+                    <choose>
+                        <when test="type == 'T'.toString()">
+                            title LIKE '%'||#{keyword}||'%'
+                        </when>
+                        <when test="type == 'C'.toString()">
+                            content LIKE '%'||#{keyword}||'%'
+                        </when>
+                        <when test="type == 'W'.toString()">
+                            writer LIKE '%'||#{keyword}||'%'
+                        </when>
+                    </choose>
+                </trim>
+            </foreach>
+        </trim>
+    </sql>
 
     <select id="getListWithPaging" resultType="org.mnu.domain.BoardVO">
         <![CDATA[
-        SELECT POST_ID as bno, title, content, USER_ID as writer, CREATED_AT as regdate, VIEWS as viewcnt
-        FROM BOARD
-        ORDER BY POST_ID DESC
-        OFFSET #{pageStart} ROWS FETCH NEXT #{perPageNum} ROWS ONLY
+        SELECT 
+            bno, title, content, writer, regdate, updateDate, viewcnt
+        FROM 
+            (
+            SELECT /*+INDEX_DESC(BOARD pk_board) */
+                rownum rn, bno, title, content, writer, regdate, updatedate, viewcnt
+            FROM 
+                BOARD
+            WHERE 
+        ]]>
+            
+        <if test="typeArr != null and typeArr.length > 0">
+            <include refid="criteria"></include>
+        </if>
+
+        <![CDATA[
+            rownum <= #{page} * #{perPageNum}
+            )
+        WHERE rn > (#{page} - 1) * #{perPageNum}
         ]]>
     </select>
 
     <select id="getTotalCount" resultType="int">
-        <![CDATA[
-        SELECT count(*) FROM BOARD WHERE POST_ID > 0
-        ]]>
+        SELECT COUNT(*) FROM BOARD
+        WHERE 
+        
+        <if test="typeArr != null and typeArr.length > 0">
+            <include refid="criteria"></include>
+        </if>
+        
+        bno > 0
     </select>
 
     <insert id="insert">
+        INSERT INTO BOARD (bno, title, content, writer)
+        VALUES (seq_board.nextval, #{title}, #{content}, #{writer})
+    </insert>
+
+    <insert id="insertSelectKey">
         <selectKey keyProperty="bno" order="BEFORE" resultType="long">
-            select SEQ_BOARD.nextval from dual
+            SELECT seq_board.nextval FROM DUAL
         </selectKey>
-        INSERT INTO BOARD (POST_ID, title, content, USER_ID)
-        VALUES (#{bno}, #{title}, #{content}, #{userId})
+        INSERT INTO BOARD (bno, title, content, writer)
+        VALUES (#{bno}, #{title}, #{content}, #{writer})
     </insert>
 
     <select id="read" resultType="org.mnu.domain.BoardVO">
-        SELECT POST_ID as bno, title, content, USER_ID as writer, CREATED_AT as regdate, VIEWS as viewcnt
-        FROM BOARD 
-        WHERE POST_ID = #{bno}
+        SELECT 
+            bno, title, content, writer, regdate, updatedate, viewcnt
+        FROM BOARD
+        WHERE bno = #{bno}
     </select>
 
     <delete id="delete">
-        DELETE FROM BOARD WHERE POST_ID = #{bno}
+        DELETE FROM BOARD WHERE bno = #{bno}
     </delete>
 
     <update id="update">
         UPDATE BOARD
-        SET title = #{title},
+        SET 
+            title = #{title},
             content = #{content},
-            updateDate = SYSDATE
-        WHERE POST_ID = #{bno}
+            updatedate = sysdate
+        WHERE bno = #{bno}
     </update>
 
     <update id="updateViewCnt">
-        UPDATE BOARD SET VIEWS = VIEWS + 1 WHERE POST_ID = #{bno}
+        UPDATE BOARD 
+        SET viewcnt = viewcnt + 1 
+        WHERE bno = #{bno}
     </update>
 
 </mapper>

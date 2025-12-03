@@ -25,6 +25,15 @@ public class BoardController {
 
     @GetMapping("/list")
     public void list(Criteria cri, Model model) {
+
+        // ★★★ 핵심 수정 부분: null 방지 처리 ★★★
+        if (cri.getTypeArr() == null) {
+            cri.setTypeArr(new String[]{});   // 필수
+        }
+        if (cri.getKeyword() == null) {
+            cri.setKeyword("");               // keyword null 방지
+        }
+
         log.info("list: " + cri);
         model.addAttribute("list", service.getList(cri));
         model.addAttribute("pageMaker", new PageDTO(cri, service.getTotal()));
