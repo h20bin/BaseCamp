@@ -99,7 +99,6 @@
                         <option value="${player.playerId}">[${player.teamName} - ${player.playerType}] ${player.name}</option>
                     </c:forEach>
                 </select>
-                <div class="form-text text-muted" style="font-size: 13px;">선택한 선수 ID는 USER_INTERESTS 테이블에 저장됩니다.</div>
             </div>
 
             <button type="submit" class="btn btn-signup-submit w-100">가입 완료</button>
