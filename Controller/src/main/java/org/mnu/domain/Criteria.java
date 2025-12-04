@@ -1,12 +1,18 @@
 package org.mnu.domain;
 
+import lombok.Data;
+
+@Data
 public class Criteria {
 
     private int page;
     private int perPageNum;
 
-    private String keyword;     
-    private String[] typeArr;   
+    private String keyword;      
+    private String[] typeArr;    
+    
+    // ★ [핵심] 카테고리 변수 추가
+    private String category; 
 
     public Criteria() {
         this.page = 1;
@@ -21,7 +27,6 @@ public class Criteria {
         this.page = page;
     }
 
-    // ▼▼▼ MyBatis에서 pageNum을 요구하므로 추가됨
     public void setPageNum(int pageNum) {
         this.setPage(pageNum);  
     }
@@ -30,7 +35,6 @@ public class Criteria {
         return page;
     }
 
-    // ▼▼▼ MyBatis에서 pageNum 사용함 → getter 추가
     public int getPageNum() {
         return this.page;
     }
@@ -47,7 +51,6 @@ public class Criteria {
         return perPageNum;
     }
 
-    // MyBatis에서 사용될 페이징 시작 번호
     public int getPageStart() {
         return (this.page - 1) * perPageNum;
     }
@@ -68,13 +71,12 @@ public class Criteria {
         this.typeArr = typeArr;
     }
 
-	public Object getCategory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    // ★ [수정됨] 카테고리 Getter/Setter 정상 구현
+    public String getCategory() {
+        return category;
+    }
 
-	public void setCategory(String string) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 }

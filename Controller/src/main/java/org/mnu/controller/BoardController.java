@@ -12,7 +12,6 @@ import org.mnu.domain.MemberVO;
 import org.mnu.domain.PageDTO;
 import org.mnu.service.AdminServiceImpl;
 import org.mnu.service.BoardService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +41,12 @@ public class BoardController {
 
     private static final String UPLOAD_FOLDER = "C:\\upload";
 
-    // ★ [수정됨] 목록 조회: 카테고리 처리 추가
+    // 1. 목록 조회
     @GetMapping("/list")
     public void list(Criteria cri, Model model) {
         
-        // 카테고리가 없으면 기본 'FREE'(자유)로 설정
-        if (cri.getCategory() == null || ((HttpHeaders) cri.getCategory()).isEmpty()) {
+        // ★ [수정됨] 잘못된 캐스팅((HttpHeaders)) 제거 및 null 체크 수정
+        if (cri.getCategory() == null || cri.getCategory().isEmpty()) {
             cri.setCategory("FREE");
         }
 
@@ -59,29 +58,30 @@ public class BoardController {
         }
 
         log.info("list: " + cri);
+        
+        // 목록 데이터 가져오기
         model.addAttribute("list", service.getList(cri));
         
-        // getTotal에도 cri를 넘겨야 카테고리별 개수가 나옴 (Service 수정 필요할 수 있음)
-        // 일단 기존 getTotal()이 인자가 없다면 service.getTotal(cri)로 바꿔야 함.
+        // 페이징 정보 (전체 개수 구할 때 cri 넘겨야 카테고리별 개수 나옴)
         model.addAttribute("pageMaker", new PageDTO(cri, service.getTotal(cri)));
         
         // 탭 활성화를 위해 현재 카테고리 값 전달
         model.addAttribute("category", cri.getCategory());
     }
 
+    // 2. 글쓰기 페이지 이동
     @GetMapping("/register")
     public void register() {
     }
 
-    // ★ [수정됨] 글 등록: 공지사항 권한 체크 및 파일 업로드
+    // 3. 글 등록 처리
     @PostMapping("/register")
     public String register(BoardVO board, MultipartFile uploadFile, 
                            RedirectAttributes rttr, HttpSession session) {
         log.info("register: " + board);
 
-        // 1. 관리자 권한 체크
+        // 관리자 권한 체크 (공지사항)
         MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
-        
         if (board.getIsNotice() != null && board.getIsNotice().equals("Y")) {
             if (loginUser == null || !"ROLE_ADMIN".equals(loginUser.getAuth())) {
                 board.setIsNotice("N"); 
@@ -90,12 +90,12 @@ public class BoardController {
             board.setIsNotice("N");
         }
         
-        // 2. 카테고리 값 체크 (없으면 FREE)
+        // ★ [수정됨] 잘못된 캐스팅 제거
         if(board.getCategory() == null || ((HttpHeaders) board.getCategory()).isEmpty()) {
             board.setCategory("FREE");
         }
 
-        // 3. 파일 업로드
+        // 파일 업로드 처리
         if (uploadFile != null && !uploadFile.isEmpty()) {
             String uploadFileName = uploadFile.getOriginalFilename();
             String uuid = UUID.randomUUID().toString();
@@ -112,15 +112,19 @@ public class BoardController {
 
         service.register(board);
         rttr.addFlashAttribute("result", board.getBno());
-        return "redirect:/board/list"; // 카테고리 유지를 위해선 list?category=... 가 좋지만 일단 기본 리다이렉트
+        
+        // 작성한 카테고리 목록으로 이동
+        return "redirect:/board/list?category=" + board.getCategory(); 
     }
 
+    // 4. 상세 보기 및 수정 페이지 이동
     @GetMapping({ "/get", "/modify" })
     public void get(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, Model model) {
         log.info("/get or modify");
         model.addAttribute("board", service.get(bno));
     }
 
+    // 5. 수정 처리
     @PostMapping("/modify")
     public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
         log.info("modify:" + board);
@@ -129,10 +133,11 @@ public class BoardController {
         }
         rttr.addAttribute("page", cri.getPage());
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
-        rttr.addAttribute("category", cri.getCategory()); // 수정 후 원래 카테고리로 복귀
+        rttr.addAttribute("category", cri.getCategory());
         return "redirect:/board/list";
     }
 
+    // 6. 삭제 처리
     @PostMapping("/remove")
     public String remove(@RequestParam("bno") Long bno, Criteria cri, RedirectAttributes rttr) {
         log.info("remove..." + bno);
@@ -145,6 +150,7 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+    // 7. 이미지 출력
     @GetMapping("/display")
     @ResponseBody
     public ResponseEntity<byte[]> getFile(String fileName) {
@@ -160,6 +166,7 @@ public class BoardController {
         return result;
     }
 
+    // 8. 신고 처리
     @PostMapping("/report")
     public String report(Long bno, String userId, Criteria cri, RedirectAttributes rttr) {
         boolean result = service.report(bno, userId);
@@ -169,9 +176,11 @@ public class BoardController {
         rttr.addAttribute("bno", bno);
         rttr.addAttribute("page", cri.getPage());
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
+        rttr.addAttribute("category", cri.getCategory());
         return "redirect:/board/get";
     }
 
+    // 9. 관리자 경고 기능
     @PostMapping("/admin/warn")
     public String warnUser(Long bno, String userId, RedirectAttributes rttr) {
         String resultMsg = adminService.giveWarning(userId, bno);
