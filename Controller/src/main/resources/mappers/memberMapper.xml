@@ -14,7 +14,8 @@
         SELECT 
             USER_ID as userId, PASSWORD as userPw, NAME as userName, NICKNAME as nickName, 
             EMAIL, PHONE, FAV_TEAM_ID as favTeamId,
-            AUTH  FROM USER_INFO 
+            AUTH,
+            WARNING_CNT as warningCnt,  BAN_UNTIL as banUntil       FROM USER_INFO 
         WHERE USER_ID = #{userId}
     </select>
     
@@ -22,7 +23,8 @@
         SELECT 
             USER_ID as userId, PASSWORD as userPw, NAME as userName, NICKNAME as nickName, 
             EMAIL, PHONE, FAV_TEAM_ID as favTeamId,
-            AUTH  FROM USER_INFO 
+            AUTH,
+            WARNING_CNT as warningCnt,  BAN_UNTIL as banUntil       FROM USER_INFO 
         WHERE USER_ID = #{userId} AND PASSWORD = #{userPw}
     </select>
 
@@ -53,5 +55,32 @@
         WHERE USER_ID = #{userId} 
           AND WITHDRAWAL_DATE > SYSDATE - 90
     </select>
+
+    <update id="increaseWarningCnt">
+        UPDATE USER_INFO 
+        SET WARNING_CNT = WARNING_CNT + 1 
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <select id="getWarningCnt" resultType="int">
+        SELECT WARNING_CNT FROM USER_INFO WHERE USER_ID = #{userId}
+    </select>
+
+    <update id="suspendMember">
+        UPDATE USER_INFO 
+        SET BAN_UNTIL = SYSDATE + #{days} 
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="disableMember">
+        UPDATE USER_INFO 
+        SET ENABLED = 0 
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <insert id="sendMessage">
+        INSERT INTO TBL_MESSAGE (MSG_ID, TARGET_ID, SENDER_ID, CONTENT)
+        VALUES (SEQ_MESSAGE.NEXTVAL, #{targetId}, #{senderId}, #{content})
+    </insert>
 
 </mapper>

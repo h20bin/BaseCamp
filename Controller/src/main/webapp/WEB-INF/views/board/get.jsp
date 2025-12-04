@@ -75,7 +75,7 @@
         }
         .post-meta {
             display: flex;
-            justify-content: space-between; /* 양쪽 정렬로 변경 */
+            justify-content: space-between; 
             align-items: center;
             font-size: 14px;
             color: var(--text-sub);
@@ -160,6 +160,10 @@
 
         .btn-remove { background-color: #fff0f0; color: #e03131; }
         .btn-remove:hover { background-color: #ffe3e3; }
+
+        /* [추가] 관리자 경고 버튼 스타일 */
+        .btn-warn { background-color: #dc3545; color: white; }
+        .btn-warn:hover { background-color: #bb2d3b; color: white; }
 
     </style>
 </head>
@@ -252,8 +256,9 @@
                 <i class="fa-solid fa-list"></i> 목록
             </a>
 
-            <c:if test="${loginUser.userId eq board.writer or loginUser.auth eq 'ROLE_ADMIN'}">
-                <div class="d-flex gap-2">
+            <div class="d-flex gap-2">
+                <%-- 본인 또는 관리자일 때: 수정/삭제 버튼 --%>
+                <c:if test="${loginUser.userId eq board.writer or loginUser.auth eq 'ROLE_ADMIN'}">
                     <a href="/board/modify?bno=<c:out value='${board.bno}'/>&page=<c:out value='${cri.page}'/>&perPageNum=<c:out value='${cri.perPageNum}'/>" class="btn-action btn-modify">
                         <i class="fa-solid fa-pen-to-square"></i> 수정
                     </a>
@@ -261,8 +266,19 @@
                     <button id="removeBtn" class="btn-action btn-remove">
                         <i class="fa-solid fa-trash"></i> 삭제
                     </button>
-                </div>
-            </c:if>
+                </c:if>
+
+                <%-- ★ [추가됨] 관리자 전용: 경고 및 삭제 버튼 ★ --%>
+                <c:if test="${loginUser.auth eq 'ROLE_ADMIN'}">
+                    <form action="/board/admin/warn" method="post" style="display:inline;" onsubmit="return confirm('🚨 관리자 권한 경고\n\n해당 유저에게 경고(1회 증가)를 부여하고\n게시글을 즉시 삭제하시겠습니까?');">
+                        <input type="hidden" name="bno" value="${board.bno}">
+                        <input type="hidden" name="userId" value="${board.writer}"> 
+                        <button type="submit" class="btn-action btn-warn">
+                            <i class="fa-solid fa-gavel"></i> 경고/삭제
+                        </button>
+                    </form>
+                </c:if>
+            </div>
         </div>
 
         <form id="removeForm" action="/board/remove" method="post">
@@ -291,7 +307,7 @@
             });
         }
 
-        // [추가됨] 신고 버튼 스크립트
+        // 신고 버튼 스크립트
         const reportBtn = document.getElementById("reportBtn");
         if(reportBtn) {
             reportBtn.addEventListener("click", function(){
@@ -301,7 +317,7 @@
             });
         }
         
-        // 신고 완료 메시지 처리 (Controller에서 rttr로 보낸 msg)
+        // 신고/경고 처리 결과 메시지 출력
         const msg = "${msg}";
         if(msg && msg !== "") {
             alert(msg);

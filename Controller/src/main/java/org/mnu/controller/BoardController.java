@@ -7,7 +7,9 @@ import java.util.UUID;
 import org.mnu.domain.BoardVO;
 import org.mnu.domain.Criteria;
 import org.mnu.domain.PageDTO;
+import org.mnu.service.AdminServiceImpl; // ★ 추가됨
 import org.mnu.service.BoardService;
+import org.springframework.beans.factory.annotation.Autowired; // ★ 추가됨
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +35,12 @@ import lombok.extern.log4j.Log4j2;
 public class BoardController {
 
     private BoardService service;
+    
+    // ★ [추가됨] 관리자 서비스 주입 (경고 처리를 위해 필요)
+    // AllArgsConstructor 때문에 자동 주입되지만, 명시적으로 필드 선언 필요
+    private AdminServiceImpl adminService; 
 
-    // [추가됨] 이미지 저장 경로 (C드라이브에 upload 폴더가 있어야 합니다)
+    // 이미지 저장 경로 (C드라이브에 upload 폴더가 있어야 합니다)
     private static final String UPLOAD_FOLDER = "C:\\upload";
 
     @GetMapping("/list")
@@ -55,27 +61,19 @@ public class BoardController {
     public void register() {
     }
 
-    // [수정됨] 파일 업로드 기능 추가
     @PostMapping("/register")
     public String register(BoardVO board, MultipartFile uploadFile, RedirectAttributes rttr) {
         log.info("register: " + board);
 
-        // 파일이 첨부되었다면 저장 로직 실행
         if (uploadFile != null && !uploadFile.isEmpty()) {
             String uploadFileName = uploadFile.getOriginalFilename();
-            
-            // 파일명 중복 방지를 위해 UUID(랜덤 문자열) 붙이기
             String uuid = UUID.randomUUID().toString();
             uploadFileName = uuid + "_" + uploadFileName;
 
             try {
-                // 폴더에 파일 저장
                 File saveFile = new File(UPLOAD_FOLDER, uploadFileName);
-                uploadFile.transferTo(saveFile); 
-                
-                // DB에 저장할 파일명 세팅 (BoardVO에 fileName 필드가 있어야 함)
-                board.setFileName(uploadFileName); 
-                
+                uploadFile.transferTo(saveFile);
+                board.setFileName(uploadFileName);
             } catch (Exception e) {
                 log.error("파일 업로드 실패: " + e.getMessage());
             }
@@ -106,7 +104,6 @@ public class BoardController {
     @PostMapping("/remove")
     public String remove(@RequestParam("bno") Long bno, Criteria cri, RedirectAttributes rttr) {
         log.info("remove..." + bno);
-        // [참고] 파일 삭제 로직은 복잡해질까봐 일단 제외했습니다. DB 데이터만 삭제합니다.
         if (service.remove(bno)) {
             rttr.addFlashAttribute("result", "success");
         }
@@ -115,7 +112,6 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    // [추가됨] 이미지 화면 출력 기능
     @GetMapping("/display")
     @ResponseBody
     public ResponseEntity<byte[]> getFile(String fileName) {
@@ -133,12 +129,9 @@ public class BoardController {
         return result;
     }
 
-    // [추가됨] 게시글 신고 기능
     @PostMapping("/report")
     public String report(Long bno, String userId, Criteria cri, RedirectAttributes rttr) {
         log.info("게시글 신고: bno=" + bno + ", user=" + userId);
-
-        // 서비스의 report 메서드 호출 (Service 수정 필요)
         boolean result = service.report(bno, userId);
 
         if (result) {
@@ -152,5 +145,17 @@ public class BoardController {
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
         
         return "redirect:/board/get";
+    }
+
+    // ★ [추가됨] 관리자 경고 기능 (/board/admin/warn)
+    @PostMapping("/admin/warn")
+    public String warnUser(Long bno, String userId, RedirectAttributes rttr) {
+        log.info("관리자 경고 요청: bno=" + bno + ", targetUser=" + userId);
+        
+        // 관리자 서비스 호출하여 경고 처리 (1회, 3회, 5회 로직 수행)
+        String resultMsg = adminService.giveWarning(userId, bno);
+        
+        rttr.addFlashAttribute("msg", resultMsg);
+        return "redirect:/board/list"; // 처리 후 목록으로 이동
     }
 }

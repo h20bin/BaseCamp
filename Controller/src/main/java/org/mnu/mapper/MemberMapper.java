@@ -1,5 +1,6 @@
 package org.mnu.mapper;
 
+import org.apache.ibatis.annotations.Param; // ★ 추가됨
 import org.mnu.domain.MemberVO;
 
 public interface MemberMapper {
@@ -13,9 +14,32 @@ public interface MemberMapper {
     // 3. 로그인
     public MemberVO login(MemberVO member); 
     
-    // 4. 회원 정보 수정 (추가됨)
+    // 4. 회원 정보 수정
     public int updateMember(MemberVO member);
 
-    // 5. 회원 탈퇴 (추가됨)
+    // 5. 회원 탈퇴
     public int deleteMember(MemberVO member);
+
+    // 6. 탈퇴 기록 저장
+    public void insertWithdrawal(@Param("userId") String userId, @Param("reason") String reason);
+
+    // 7. 재가입 제한 확인
+    public int checkRejoinRestriction(String userId);
+
+    // ★ [여기부터 신규 추가] 관리자 경고 시스템 메서드 ★
+    
+    // 8. 경고 횟수 증가
+    public void increaseWarningCnt(String userId);
+
+    // 9. 현재 경고 횟수 조회
+    public int getWarningCnt(String userId);
+
+    // 10. 활동 정지 처분
+    public void suspendMember(@Param("userId") String userId, @Param("days") int days);
+
+    // 11. 영구 정지 (비활성화)
+    public void disableMember(String userId);
+
+    // 12. 쪽지 발송
+    public void sendMessage(@Param("targetId") String targetId, @Param("senderId") String senderId, @Param("content") String content);
 }
