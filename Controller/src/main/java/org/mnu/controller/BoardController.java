@@ -4,12 +4,15 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
 import org.mnu.domain.BoardVO;
 import org.mnu.domain.Criteria;
+import org.mnu.domain.MemberVO;
 import org.mnu.domain.PageDTO;
-import org.mnu.service.AdminServiceImpl; // ★ 추가됨
+import org.mnu.service.AdminServiceImpl;
 import org.mnu.service.BoardService;
-import org.springframework.beans.factory.annotation.Autowired; // ★ 추가됨
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,16 +38,19 @@ import lombok.extern.log4j.Log4j2;
 public class BoardController {
 
     private BoardService service;
-    
-    // ★ [추가됨] 관리자 서비스 주입 (경고 처리를 위해 필요)
-    // AllArgsConstructor 때문에 자동 주입되지만, 명시적으로 필드 선언 필요
     private AdminServiceImpl adminService; 
 
-    // 이미지 저장 경로 (C드라이브에 upload 폴더가 있어야 합니다)
     private static final String UPLOAD_FOLDER = "C:\\upload";
 
+    // ★ [수정됨] 목록 조회: 카테고리 처리 추가
     @GetMapping("/list")
     public void list(Criteria cri, Model model) {
+        
+        // 카테고리가 없으면 기본 'FREE'(자유)로 설정
+        if (cri.getCategory() == null || ((HttpHeaders) cri.getCategory()).isEmpty()) {
+            cri.setCategory("FREE");
+        }
+
         if (cri.getTypeArr() == null) {
             cri.setTypeArr(new String[]{});
         }
@@ -54,17 +60,42 @@ public class BoardController {
 
         log.info("list: " + cri);
         model.addAttribute("list", service.getList(cri));
-        model.addAttribute("pageMaker", new PageDTO(cri, service.getTotal()));
+        
+        // getTotal에도 cri를 넘겨야 카테고리별 개수가 나옴 (Service 수정 필요할 수 있음)
+        // 일단 기존 getTotal()이 인자가 없다면 service.getTotal(cri)로 바꿔야 함.
+        model.addAttribute("pageMaker", new PageDTO(cri, service.getTotal(cri)));
+        
+        // 탭 활성화를 위해 현재 카테고리 값 전달
+        model.addAttribute("category", cri.getCategory());
     }
 
     @GetMapping("/register")
     public void register() {
     }
 
+    // ★ [수정됨] 글 등록: 공지사항 권한 체크 및 파일 업로드
     @PostMapping("/register")
-    public String register(BoardVO board, MultipartFile uploadFile, RedirectAttributes rttr) {
+    public String register(BoardVO board, MultipartFile uploadFile, 
+                           RedirectAttributes rttr, HttpSession session) {
         log.info("register: " + board);
 
+        // 1. 관리자 권한 체크
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        
+        if (board.getIsNotice() != null && board.getIsNotice().equals("Y")) {
+            if (loginUser == null || !"ROLE_ADMIN".equals(loginUser.getAuth())) {
+                board.setIsNotice("N"); 
+            }
+        } else {
+            board.setIsNotice("N");
+        }
+        
+        // 2. 카테고리 값 체크 (없으면 FREE)
+        if(board.getCategory() == null || ((HttpHeaders) board.getCategory()).isEmpty()) {
+            board.setCategory("FREE");
+        }
+
+        // 3. 파일 업로드
         if (uploadFile != null && !uploadFile.isEmpty()) {
             String uploadFileName = uploadFile.getOriginalFilename();
             String uuid = UUID.randomUUID().toString();
@@ -81,7 +112,7 @@ public class BoardController {
 
         service.register(board);
         rttr.addFlashAttribute("result", board.getBno());
-        return "redirect:/board/list";
+        return "redirect:/board/list"; // 카테고리 유지를 위해선 list?category=... 가 좋지만 일단 기본 리다이렉트
     }
 
     @GetMapping({ "/get", "/modify" })
@@ -98,6 +129,7 @@ public class BoardController {
         }
         rttr.addAttribute("page", cri.getPage());
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
+        rttr.addAttribute("category", cri.getCategory()); // 수정 후 원래 카테고리로 복귀
         return "redirect:/board/list";
     }
 
@@ -109,16 +141,15 @@ public class BoardController {
         }
         rttr.addAttribute("page", cri.getPage());
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
+        rttr.addAttribute("category", cri.getCategory());
         return "redirect:/board/list";
     }
 
     @GetMapping("/display")
     @ResponseBody
     public ResponseEntity<byte[]> getFile(String fileName) {
-        log.info("이미지 출력 요청: " + fileName);
         File file = new File(UPLOAD_FOLDER + "\\" + fileName);
         ResponseEntity<byte[]> result = null;
-
         try {
             HttpHeaders header = new HttpHeaders();
             header.add("Content-Type", Files.probeContentType(file.toPath()));
@@ -131,31 +162,20 @@ public class BoardController {
 
     @PostMapping("/report")
     public String report(Long bno, String userId, Criteria cri, RedirectAttributes rttr) {
-        log.info("게시글 신고: bno=" + bno + ", user=" + userId);
         boolean result = service.report(bno, userId);
-
-        if (result) {
-            rttr.addFlashAttribute("msg", "신고가 정상적으로 접수되었습니다.");
-        } else {
-            rttr.addFlashAttribute("msg", "이미 신고한 게시글입니다.");
-        }
+        if (result) rttr.addFlashAttribute("msg", "신고가 접수되었습니다.");
+        else rttr.addFlashAttribute("msg", "이미 신고한 게시글입니다.");
 
         rttr.addAttribute("bno", bno);
         rttr.addAttribute("page", cri.getPage());
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
-        
         return "redirect:/board/get";
     }
 
-    // ★ [추가됨] 관리자 경고 기능 (/board/admin/warn)
     @PostMapping("/admin/warn")
     public String warnUser(Long bno, String userId, RedirectAttributes rttr) {
-        log.info("관리자 경고 요청: bno=" + bno + ", targetUser=" + userId);
-        
-        // 관리자 서비스 호출하여 경고 처리 (1회, 3회, 5회 로직 수행)
         String resultMsg = adminService.giveWarning(userId, bno);
-        
         rttr.addFlashAttribute("msg", resultMsg);
-        return "redirect:/board/list"; // 처리 후 목록으로 이동
+        return "redirect:/board/list";
     }
 }

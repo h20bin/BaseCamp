@@ -19,4 +19,13 @@ public class BoardVO {
     // ★ [추가됨] 파일 업로드 및 신고 기능용 필드
     private String fileName;   // 업로드된 이미지 파일명 (UUID_원본이름)
     private int reportCnt;     // 게시글 신고 횟수
+    private String isNotice;
+	public Object getCategory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void setCategory(String string) {
+		// TODO Auto-generated method stub
+		
+	}
 }

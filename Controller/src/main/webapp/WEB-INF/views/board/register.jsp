@@ -76,14 +76,14 @@
             margin-bottom: 8px;
         }
         
-        .form-control {
+        .form-control, .form-select {
             border-radius: 8px;
             padding: 12px 15px;
             border: 1px solid #ddd;
             font-size: 15px;
             transition: all 0.2s;
         }
-        .form-control:focus {
+        .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(49, 130, 246, 0.1);
         }
@@ -165,16 +165,36 @@
             <form action="/board/register" method="post" enctype="multipart/form-data">
                 
                 <div class="mb-4">
+                    <label for="category" class="form-label">게시판 선택</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="FREE" selected>자유게시판</option>
+                        <option value="QNA">Q&A 게시판</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
                     <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력해 주세요." required>
                 </div>
 
+                <div class="mb-4 form-check">
+                    <c:choose>
+                        <c:when test="${loginUser.auth eq 'ROLE_ADMIN'}">
+                            <input class="form-check-input" type="checkbox" id="noticeCheck" name="isNotice" value="Y">
+                            <label class="form-check-label fw-bold text-danger" for="noticeCheck">
+                                📢 공지사항으로 등록
+                            </label>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="hidden" name="isNotice" value="N">
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+
                 <div class="mb-4">
                     <label for="writer" class="form-label">작성자</label>
-                    
                     <input type="text" class="form-control" id="writer" name="writer" 
                            value="${loginUser.userName}" readonly>
-                           
                     <input type="hidden" name="userId" value="${loginUser.userId}">
                 </div>
 

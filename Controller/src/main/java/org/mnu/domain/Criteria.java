@@ -67,4 +67,14 @@ public class Criteria {
     public void setTypeArr(String[] typeArr) {
         this.typeArr = typeArr;
     }
+
+	public Object getCategory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setCategory(String string) {
+		// TODO Auto-generated method stub
+		
+	}
 }

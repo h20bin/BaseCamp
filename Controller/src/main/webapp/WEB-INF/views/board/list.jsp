@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basecamp - 자유게시판</title>
+    <title>Basecamp</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -158,6 +158,24 @@
             color: #ffffff !important;
         }
 
+        /* 탭 메뉴 스타일 */
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            background: none;
+            font-weight: 700;
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--primary-color);
+        }
+
         @media (max-width: 768px) {
             .col-viewcnt, .col-regdate { display: none; }
             .title-link { max-width: 200px; }
@@ -195,8 +213,22 @@
 
     <div class="container-main">
         
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link ${category == 'FREE' || category == null ? 'active' : ''}" href="/board/list?category=FREE">자유게시판</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link ${category == 'QNA' ? 'active' : ''}" href="/board/list?category=QNA">Q&A 게시판</a>
+            </li>
+        </ul>
+
         <div class="page-header">
-            <h2 class="page-title">자유게시판</h2>
+            <h2 class="page-title">
+                <c:choose>
+                    <c:when test="${category == 'QNA'}">Q&A 게시판</c:when>
+                    <c:otherwise>자유게시판</c:otherwise>
+                </c:choose>
+            </h2>
             
             <c:if test="${not empty loginUser}">
                 <a href="/board/register" class="btn-write-custom">
@@ -218,10 +250,26 @@
                 </thead>
                 <tbody>
                     <c:forEach items="${list}" var="board">
-                        <tr>
-                            <td class="text-center text-muted"><c:out value="${board.bno}"/></td>
+                        <tr class="${board.isNotice == 'Y' ? 'table-secondary' : ''}">
+                            
+                            <td class="text-center text-muted">
+                                <c:choose>
+                                    <c:when test="${board.isNotice == 'Y'}">
+                                        <span class="badge bg-danger">공지</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${board.bno}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            
                             <td>
-                                <a class="title-link" href='/board/get?bno=<c:out value="${board.bno}"/>&page=<c:out value="${pageMaker.cri.page}"/>&perPageNum=<c:out value="${pageMaker.cri.perPageNum}"/>'>
+                                <a class="title-link" href='/board/get?bno=<c:out value="${board.bno}"/>&page=<c:out value="${pageMaker.cri.page}"/>&perPageNum=<c:out value="${pageMaker.cri.perPageNum}"/>&category=<c:out value="${category}"/>'>
+                                    
+                                    <c:if test="${board.isNotice == 'Y'}">
+                                        <span class="text-danger fw-bold me-1">[필독]</span>
+                                    </c:if>
+                                    
                                     <c:out value="${board.title}"/>
                                 </a>
                             </td>
@@ -242,7 +290,7 @@
             <ul class="pagination">
                 <c:if test="${pageMaker.prev}">
                     <li class="page-item">
-                        <a class="page-link" href="/board/list?page=${pageMaker.startPage - 1}" aria-label="Previous">
+                        <a class="page-link" href="/board/list?page=${pageMaker.startPage - 1}&category=${category}" aria-label="Previous">
                             <i class="fa-solid fa-chevron-left"></i>
                         </a>
                     </li>
@@ -250,13 +298,13 @@
 
                 <c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
                     <li class="page-item ${pageMaker.cri.page == num ? 'active' : ''}">
-                        <a class="page-link" href="/board/list?page=${num}">${num}</a>
+                        <a class="page-link" href="/board/list?page=${num}&category=${category}">${num}</a>
                     </li>
                 </c:forEach>
 
                 <c:if test="${pageMaker.next}">
                     <li class="page-item">
-                        <a class="page-link" href="/board/list?page=${pageMaker.endPage + 1}" aria-label="Next">
+                        <a class="page-link" href="/board/list?page=${pageMaker.endPage + 1}&category=${category}" aria-label="Next">
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </li>
@@ -271,7 +319,6 @@
             alert(result + "번 글이 성공적으로 등록되었습니다.");
         }
         
-        // (선택 사항) 관리자 경고 메시지가 있다면 띄워주기
         var msg = '${msg}';
         if(msg && msg !== '') {
             alert(msg);
