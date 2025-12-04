@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.mnu.domain.MemberVO;
+import org.mnu.domain.MessageVO; // ★ 추가됨 (쪽지 VO)
 import org.mnu.service.MemberService;
 import org.mnu.service.RecordService;
 import org.springframework.stereotype.Controller;
@@ -35,18 +36,16 @@ public class MemberController {
         return "member/signup";
     }
 
-    // 2. 회원가입 처리 (수정됨: 관심 구단 미선택 시 T9999 자동 입력)
+    // 2. 회원가입 처리
     @PostMapping("/member/signup")
     public String signup(MemberVO member, String favPlayerId1, String favPlayerId2, String favPlayerId3, RedirectAttributes rttr) {
         log.info("회원가입 요청: " + member);
 
-        // 비밀번호 유효성 검사
         if (!member.getUserPw().matches("^(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$")) {
             rttr.addFlashAttribute("msg", "비밀번호는 8자리 이상, 특수문자를 포함해야 합니다.");
             return "redirect:/member/signup"; 
         }
 
-        // [수정된 부분] 관심 구단을 선택하지 않았다면 'T9999'(미선택)로 강제 설정
         if (member.getFavTeamId() == null || member.getFavTeamId().isEmpty()) {
             member.setFavTeamId("T9999"); 
         }
@@ -57,7 +56,6 @@ public class MemberController {
         if (favPlayerId3 != null && !favPlayerId3.isEmpty()) favPlayerIds.add(favPlayerId3);
 
         try {
-            // 회원가입 실행 (DB 저장)
             service.register(member, favPlayerIds);
             
         } catch (org.springframework.dao.DuplicateKeyException e) {
@@ -127,7 +125,6 @@ public class MemberController {
         
         service.modify(member); 
         
-        // 세션 갱신
         session.setAttribute("loginUser", member);
         rttr.addFlashAttribute("msg", "회원정보가 수정되었습니다.");
         
@@ -145,7 +142,7 @@ public class MemberController {
             try {
                 service.remove(loginUser);
                 
-                session.invalidate(); // 탈퇴 성공 시 로그아웃
+                session.invalidate(); 
                 rttr.addFlashAttribute("msg", "탈퇴가 완료되었습니다. (3개월간 재가입 제한)");
                 return "redirect:/";
                 
@@ -156,6 +153,19 @@ public class MemberController {
         } else {
             rttr.addFlashAttribute("msg", "비밀번호가 일치하지 않습니다.");
             return "redirect:/member/modify";
+        }
+    }
+
+    // ★ [추가됨] 9. 쪽지함 페이지 이동 (/member/message)
+    @GetMapping("/member/message")
+    public void message(HttpSession session, Model model) {
+        log.info("쪽지함 페이지 진입");
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        
+        if (loginUser != null) {
+            // 로그인한 유저의 ID로 쪽지 목록 가져오기
+            List<MessageVO> list = service.getMyMessages(loginUser.getUserId());
+            model.addAttribute("msgList", list);
         }
     }
 }

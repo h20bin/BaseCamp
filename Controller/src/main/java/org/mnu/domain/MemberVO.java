@@ -36,7 +36,10 @@ public class MemberVO {
     // [DB: ENABLED]
     private boolean enabled;    // 계정 활성화 여부
 
-    // ★ [추가됨] 관리자 권한 (ROLE_USER, ROLE_ADMIN 등)
-    // [DB: AUTH 컬럼과 매핑됨]
-    private String auth; 
+    // [DB: AUTH]
+    private String auth;        // 관리자 권한
+
+    // ★ [추가됨] 경고 시스템용 변수
+    private int warningCnt;      // 경고 횟수 (기본 0)
+    private Date banUntil;       // 활동 정지 종료일 (이 날짜 전까지 글쓰기 금지)
 }

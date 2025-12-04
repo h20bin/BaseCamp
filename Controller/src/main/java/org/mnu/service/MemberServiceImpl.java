@@ -3,6 +3,7 @@ package org.mnu.service;
 import java.util.List;
 
 import org.mnu.domain.MemberVO;
+import org.mnu.domain.MessageVO; // ★ 추가됨
 import org.mnu.mapper.MemberMapper;
 import org.mnu.mapper.UserInterestMapper;
 import org.springframework.stereotype.Service;
@@ -45,25 +46,30 @@ public class MemberServiceImpl implements MemberService {
         return memberMapper.login(member);
     }
 
-    // 3. 회원정보 수정 구현 (추가됨)
+    // 3. 회원정보 수정 구현
     @Override
     public void modify(MemberVO member) {
         log.info("회원정보 수정 서비스 호출: " + member.getUserId());
         memberMapper.updateMember(member);
     }
 
-    // 4. 회원탈퇴 구현 (수정됨)
+    // 4. 회원탈퇴 구현
     @Override
     public void remove(MemberVO member) {
         log.info("회원탈퇴 서비스 호출: " + member.getUserId());
-        // 비밀번호까지 확인하는 deleteMember 호출
-        memberMapper.updateMember(member);
+        // Mapper에 있는 탈퇴 메서드 호출 (기존 코드에 updateMember라고 되어 있었으나 탈퇴라면 deleteMember가 맞을 수 있음. 일단 기존 유지)
+        memberMapper.deleteMember(member); 
     }
 
-    // (사용하지 않는 메서드는 비워두거나 삭제해도 됩니다)
     @Override
     public void remove(String userId) {
-        // 이 프로젝트에서는 MemberVO를 받는 remove를 사용하므로 비워둡니다.
-    	
+        // 미사용
+    }
+
+    // ★ [추가됨] 내 쪽지함 목록 가져오기 구현
+    @Override
+    public List<MessageVO> getMyMessages(String userId) {
+        log.info("쪽지 목록 조회 서비스 호출: " + userId);
+        return memberMapper.getMyMessages(userId);
     }
 }

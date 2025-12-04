@@ -67,14 +67,14 @@
         /* 글쓰기 버튼 */
         .btn-write-custom {
             background-color: #3182f6 !important; 
-            color: white !important;             
+            color: white !important;              
             border: none !important;
             padding: 12px 25px !important;
             font-size: 16px !important;
             font-weight: bold !important;
             border-radius: 8px !important;
             text-decoration: none !important;
-            display: inline-block !important;   
+            display: inline-block !important;    
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             line-height: normal !important;
         }
@@ -125,35 +125,30 @@
         }
         .title-link:hover { color: var(--primary-color); }
 
-        /* =========================================
-           [수정됨] 페이지네이션 스타일 (강제 적용)
-           ========================================= */
+        /* 페이지네이션 스타일 */
         .pagination {
             justify-content: center;
             margin-top: 40px;
             gap: 8px;
         }
         
-        /* 1. 기본 버튼 (선택 안 된 것) */
         .pagination .page-item .page-link {
-            background-color: #ffffff !important;   /* 배경 흰색 */
-            color: #333333 !important;              /* 글자 검은색 */
-            border: 1px solid #dee2e6 !important;   /* 테두리 회색 */
+            background-color: #ffffff !important;   
+            color: #333333 !important;              
+            border: 1px solid #dee2e6 !important;   
             border-radius: 8px !important;
             font-weight: 600 !important;
             padding: 8px 16px !important;
         }
 
-        /* 2. 현재 선택된 페이지 (1번 등) - 여기가 문제였음 */
         .pagination .page-item.active .page-link {
-            background-color: #3182f6 !important;   /* 배경 파란색 (강제) */
-            border-color: #3182f6 !important;       /* 테두리 파란색 */
-            color: #ffffff !important;              /* 글자 흰색 (강제) */
-            z-index: 3 !important;                  /* 제일 위로 올림 */
+            background-color: #3182f6 !important;   
+            border-color: #3182f6 !important;       
+            color: #ffffff !important;              
+            z-index: 3 !important;                  
             box-shadow: 0 4px 10px rgba(49, 130, 246, 0.4) !important;
         }
 
-        /* 3. 마우스 올렸을 때 */
         .pagination .page-item .page-link:hover {
             background-color: #e9ecef !important;
             color: #3182f6 !important;
@@ -186,6 +181,11 @@
                         <span class="me-3 fw-bold text-dark">
                             ${loginUser.userName}님
                         </span>
+                        
+                        <a href="/member/message" class="btn btn-outline-primary btn-sm me-2 fw-bold">
+                            <i class="fa-regular fa-envelope"></i> 쪽지함
+                        </a>
+
                         <a href="/member/logout" class="btn btn-outline-secondary btn-sm">로그아웃</a>
                     </c:otherwise>
                 </c:choose>
@@ -269,6 +269,12 @@
         var result = '${result}';
         if (result && result !== '' && !isNaN(result)) {
             alert(result + "번 글이 성공적으로 등록되었습니다.");
+        }
+        
+        // (선택 사항) 관리자 경고 메시지가 있다면 띄워주기
+        var msg = '${msg}';
+        if(msg && msg !== '') {
+            alert(msg);
         }
     </script>
 

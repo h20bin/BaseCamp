@@ -83,4 +83,17 @@
         VALUES (SEQ_MESSAGE.NEXTVAL, #{targetId}, #{senderId}, #{content})
     </insert>
 
+    <select id="getMyMessages" resultType="org.mnu.domain.MessageVO">
+        SELECT 
+            MSG_ID as msgId,
+            TARGET_ID as targetId,
+            SENDER_ID as senderId,
+            CONTENT as content,
+            SEND_DATE as sendDate,
+            IS_READ as isRead
+        FROM TBL_MESSAGE 
+        WHERE TARGET_ID = #{userId} 
+        ORDER BY SEND_DATE DESC
+    </select>
+
 </mapper>
