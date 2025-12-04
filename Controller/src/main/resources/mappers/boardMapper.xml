@@ -28,20 +28,19 @@
     <select id="getListWithPaging" resultType="org.mnu.domain.BoardVO">
         <![CDATA[
         SELECT 
-            bno, title, content, writer, regdate, updateDate, viewcnt
+            bno, title, content, writer, regdate, updateDate, viewcnt, fileName, reportCnt
         FROM 
             (
             SELECT /*+INDEX_DESC(BOARD pk_board) */
-                rownum rn, bno, title, content, writer, regdate, updatedate, viewcnt
+                rownum rn, bno, title, content, writer, regdate, updatedate, viewcnt, fileName, 
+                REPORT_CNT as reportCnt
             FROM 
                 BOARD
             WHERE 
         ]]>
-            
         <if test="typeArr != null and typeArr.length > 0">
             <include refid="criteria"></include>
         </if>
-
         <![CDATA[
             rownum <= #{page} * #{perPageNum}
             )
@@ -52,30 +51,29 @@
     <select id="getTotalCount" resultType="int">
         SELECT COUNT(*) FROM BOARD
         WHERE 
-        
         <if test="typeArr != null and typeArr.length > 0">
             <include refid="criteria"></include>
         </if>
-        
         bno > 0
     </select>
 
     <insert id="insert">
-        INSERT INTO BOARD (bno, title, content, writer)
-        VALUES (seq_board.nextval, #{title}, #{content}, #{writer})
+        INSERT INTO BOARD (bno, title, content, writer, fileName)
+        VALUES (seq_board.nextval, #{title}, #{content}, #{writer}, #{fileName, jdbcType=VARCHAR})
     </insert>
 
     <insert id="insertSelectKey">
         <selectKey keyProperty="bno" order="BEFORE" resultType="long">
             SELECT seq_board.nextval FROM DUAL
         </selectKey>
-        INSERT INTO BOARD (bno, title, content, writer)
-        VALUES (#{bno}, #{title}, #{content}, #{writer})
+        INSERT INTO BOARD (bno, title, content, writer, fileName)
+        VALUES (#{bno}, #{title}, #{content}, #{writer}, #{fileName, jdbcType=VARCHAR})
     </insert>
 
     <select id="read" resultType="org.mnu.domain.BoardVO">
         SELECT 
-            bno, title, content, writer, regdate, updatedate, viewcnt
+            bno, title, content, writer, regdate, updatedate, viewcnt, fileName, 
+            REPORT_CNT as reportCnt
         FROM BOARD
         WHERE bno = #{bno}
     </select>
@@ -96,6 +94,22 @@
     <update id="updateViewCnt">
         UPDATE BOARD 
         SET viewcnt = viewcnt + 1 
+        WHERE bno = #{bno}
+    </update>
+
+    <select id="checkReport" resultType="int">
+        SELECT count(*) FROM TBL_REPORT 
+        WHERE bno = #{bno} AND user_id = #{userId}
+    </select>
+
+    <insert id="addReportHistory">
+        INSERT INTO TBL_REPORT (report_id, bno, user_id)
+        VALUES (seq_report.nextval, #{bno}, #{userId})
+    </insert>
+
+    <update id="increaseReportCnt">
+        UPDATE BOARD 
+        SET REPORT_CNT = REPORT_CNT + 1 
         WHERE bno = #{bno}
     </update>
 

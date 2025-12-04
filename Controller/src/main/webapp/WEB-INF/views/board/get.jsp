@@ -46,7 +46,7 @@
 
         /* 메인 컨테이너 */
         .container-main {
-            max-width: 800px; /* 읽기 편한 너비 */
+            max-width: 800px;
             margin: 50px auto;
             padding: 0 20px;
         }
@@ -61,7 +61,7 @@
             margin-bottom: 30px;
         }
 
-        /* 헤더 영역 (제목, 정보) */
+        /* 헤더 영역 */
         .post-header {
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
@@ -75,9 +75,14 @@
         }
         .post-meta {
             display: flex;
-            gap: 15px;
+            justify-content: space-between; /* 양쪽 정렬로 변경 */
+            align-items: center;
             font-size: 14px;
             color: var(--text-sub);
+        }
+        .meta-info {
+            display: flex;
+            gap: 15px;
             align-items: center;
         }
         .meta-divider {
@@ -86,13 +91,46 @@
             background-color: #ddd;
         }
 
+        /* 신고 버튼 스타일 */
+        .btn-report {
+            font-size: 13px;
+            color: #e03131;
+            background-color: #fff5f5;
+            border: 1px solid #ffc9c9;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .btn-report:hover {
+            background-color: #ffc9c9;
+            color: #c92a2a;
+        }
+
+        /* 블라인드 처리 알림창 */
+        .blind-alert {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            color: #868e96;
+            border: 1px dashed #ced4da;
+        }
+
         /* 본문 영역 */
         .post-content {
             font-size: 16px;
             line-height: 1.8;
             color: #333;
             min-height: 200px;
-            white-space: pre-wrap; /* 줄바꿈 유지 (Textarea 대용) */
+            white-space: pre-wrap; 
+        }
+        .post-image {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
         }
 
         /* 버튼 그룹 */
@@ -114,25 +152,13 @@
             gap: 6px;
         }
         
-        /* 목록 버튼 (회색) */
-        .btn-list {
-            background-color: #f2f4f6;
-            color: var(--text-main);
-        }
+        .btn-list { background-color: #f2f4f6; color: var(--text-main); }
         .btn-list:hover { background-color: #e5e8eb; color: black; }
 
-        /* 수정 버튼 (파란색) */
-        .btn-modify {
-            background-color: var(--primary-color);
-            color: white;
-        }
+        .btn-modify { background-color: var(--primary-color); color: white; }
         .btn-modify:hover { background-color: #1b64da; color: white; }
 
-        /* 삭제 버튼 (빨간색) */
-        .btn-remove {
-            background-color: #fff0f0;
-            color: #e03131;
-        }
+        .btn-remove { background-color: #fff0f0; color: #e03131; }
         .btn-remove:hover { background-color: #ffe3e3; }
 
     </style>
@@ -147,7 +173,6 @@
             
             <div class="ms-auto d-flex align-items-center gap-3">
                 <c:choose>
-                    <%-- 로그인 했을 때 --%>
                     <c:when test="${not empty loginUser}">
                         <span class="fw-bold text-dark">
                             👋 ${loginUser.userName}님 
@@ -156,8 +181,6 @@
                             로그아웃
                         </a>
                     </c:when>
-                    
-                    <%-- 로그인 안 했을 때 --%>
                     <c:otherwise>
                         <a href="/member/login" class="text-decoration-none text-muted fw-bold">
                             로그인
@@ -165,7 +188,7 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-            </div>
+        </div>
     </nav>
 
     <div class="container-main">
@@ -184,15 +207,43 @@
                 </h1>
 
                 <div class="post-meta">
-                    <span><i class="fa-regular fa-user"></i> <c:out value="${board.writer}"/></span>
-                    <span class="meta-divider"></span>
-                    <span><i class="fa-regular fa-calendar"></i> <fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/></span>
+                    <div class="meta-info">
+                        <span><i class="fa-regular fa-user"></i> <c:out value="${board.writer}"/></span>
+                        <span class="meta-divider"></span>
+                        <span><i class="fa-regular fa-calendar"></i> <fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/></span>
+                        <span class="meta-divider"></span>
+                        <span><i class="fa-regular fa-eye"></i> <c:out value="${board.viewcnt}"/></span>
+                    </div>
+
+                    <c:if test="${not empty loginUser and loginUser.userId ne board.writer}">
+                        <button id="reportBtn" class="btn-report">
+                            <i class="fa-solid fa-bullhorn"></i> 신고하기
+                        </button>
+                    </c:if>
                 </div>
             </div>
 
-            <div class="post-content">
-<c:out value="${board.content}"/>
-            </div>
+            <c:choose>
+                <c:when test="${board.reportCnt >= 5 and loginUser.auth ne 'ROLE_ADMIN'}">
+                    <div class="blind-alert">
+                        <i class="fa-solid fa-triangle-exclamation fa-2x mb-3 text-danger"></i>
+                        <h4 class="fw-bold text-dark">다수의 신고로 인해 블라인드 처리된 게시글입니다.</h4>
+                        <p class="mb-0 mt-2">관리자의 검토 후 복구될 수 있습니다.</p>
+                    </div>
+                </c:when>
+                
+                <c:otherwise>
+                    <div class="post-content">
+                        <c:if test="${not empty board.fileName}">
+                            <div class="text-center">
+                                <img src="/board/display?fileName=${board.fileName}" class="post-image" alt="첨부 이미지">
+                            </div>
+                        </c:if>
+
+                        <c:out value="${board.content}"/>
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
         </div>
 
@@ -201,15 +252,17 @@
                 <i class="fa-solid fa-list"></i> 목록
             </a>
 
-            <div class="d-flex gap-2">
-                <a href="/board/modify?bno=<c:out value='${board.bno}'/>&page=<c:out value='${cri.page}'/>&perPageNum=<c:out value='${cri.perPageNum}'/>" class="btn-action btn-modify">
-                    <i class="fa-solid fa-pen-to-square"></i> 수정
-                </a>
-                
-                <button id="removeBtn" class="btn-action btn-remove">
-                    <i class="fa-solid fa-trash"></i> 삭제
-                </button>
-            </div>
+            <c:if test="${loginUser.userId eq board.writer or loginUser.auth eq 'ROLE_ADMIN'}">
+                <div class="d-flex gap-2">
+                    <a href="/board/modify?bno=<c:out value='${board.bno}'/>&page=<c:out value='${cri.page}'/>&perPageNum=<c:out value='${cri.perPageNum}'/>" class="btn-action btn-modify">
+                        <i class="fa-solid fa-pen-to-square"></i> 수정
+                    </a>
+                    
+                    <button id="removeBtn" class="btn-action btn-remove">
+                        <i class="fa-solid fa-trash"></i> 삭제
+                    </button>
+                </div>
+            </c:if>
         </div>
 
         <form id="removeForm" action="/board/remove" method="post">
@@ -218,14 +271,41 @@
             <input type="hidden" name="perPageNum" value="<c:out value='${cri.perPageNum}'/>">
         </form>
 
+        <form id="reportForm" action="/board/report" method="post">
+            <input type="hidden" name="bno" value="<c:out value='${board.bno}'/>">
+            <input type="hidden" name="userId" value="${loginUser.userId}">
+            <input type="hidden" name="page" value="<c:out value='${cri.page}'/>">
+            <input type="hidden" name="perPageNum" value="<c:out value='${cri.perPageNum}'/>">
+        </form>
+
     </div>
 
     <script>
-        document.getElementById("removeBtn").addEventListener("click", function(){
-            if(confirm("정말로 이 게시글을 삭제하시겠습니까?")){
-                document.getElementById("removeForm").submit();
-            }
-        });
+        // 삭제 버튼 스크립트
+        const removeBtn = document.getElementById("removeBtn");
+        if(removeBtn) {
+            removeBtn.addEventListener("click", function(){
+                if(confirm("정말로 이 게시글을 삭제하시겠습니까?")){
+                    document.getElementById("removeForm").submit();
+                }
+            });
+        }
+
+        // [추가됨] 신고 버튼 스크립트
+        const reportBtn = document.getElementById("reportBtn");
+        if(reportBtn) {
+            reportBtn.addEventListener("click", function(){
+                if(confirm("이 게시글을 신고하시겠습니까?\n(허위 신고 시 제재될 수 있습니다.)")){
+                    document.getElementById("reportForm").submit();
+                }
+            });
+        }
+        
+        // 신고 완료 메시지 처리 (Controller에서 rttr로 보낸 msg)
+        const msg = "${msg}";
+        if(msg && msg !== "") {
+            alert(msg);
+        }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

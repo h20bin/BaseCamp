@@ -16,19 +16,19 @@ public class MemberVO {
     private String userName;    // 사용자 이름
     
     // [DB: NICKNAME]
-    private String nickName;    // ⭐ 닉네임 (추가됨)
+    private String nickName;    // 닉네임
     
     // [DB: EMAIL]
     private String email;       // 이메일
     
     // [DB: PHONE]
-    private String phone;       // ⭐ 휴대폰 번호 (추가됨)
+    private String phone;       // 휴대폰 번호
     
     // [DB: FAV_TEAM_ID]
-    private String favTeamId;   // ⭐ 관심 구단 ID (FK) (추가됨)
+    private String favTeamId;   // 관심 구단 ID (FK)
     
     // [DB: REGDATE]
-    private Date regDate;       // 등록일 (CREATED_AT)
+    private Date regDate;       // 등록일
     
     // [DB: UPDATEDATE]
     private Date updateDate;    // 수정일
@@ -36,6 +36,7 @@ public class MemberVO {
     // [DB: ENABLED]
     private boolean enabled;    // 계정 활성화 여부
 
-    // 참고: Lombok의 @Data가 Getter/Setter를 자동으로 생성하므로
-    // 수동으로 추가된 public String getPassword() {} 메서드는 삭제했습니다.
+    // ★ [추가됨] 관리자 권한 (ROLE_USER, ROLE_ADMIN 등)
+    // [DB: AUTH 컬럼과 매핑됨]
+    private String auth; 
 }

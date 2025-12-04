@@ -1,17 +1,28 @@
 package org.mnu.controller;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.UUID;
+
 import org.mnu.domain.BoardVO;
 import org.mnu.domain.Criteria;
 import org.mnu.domain.PageDTO;
 import org.mnu.service.BoardService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -23,15 +34,16 @@ public class BoardController {
 
     private BoardService service;
 
+    // [추가됨] 이미지 저장 경로 (C드라이브에 upload 폴더가 있어야 합니다)
+    private static final String UPLOAD_FOLDER = "C:\\upload";
+
     @GetMapping("/list")
     public void list(Criteria cri, Model model) {
-
-        // ★★★ 핵심 수정 부분: null 방지 처리 ★★★
         if (cri.getTypeArr() == null) {
-            cri.setTypeArr(new String[]{});   // 필수
+            cri.setTypeArr(new String[]{});
         }
         if (cri.getKeyword() == null) {
-            cri.setKeyword("");               // keyword null 방지
+            cri.setKeyword("");
         }
 
         log.info("list: " + cri);
@@ -41,12 +53,34 @@ public class BoardController {
 
     @GetMapping("/register")
     public void register() {
-        // Just shows the registration page
     }
 
+    // [수정됨] 파일 업로드 기능 추가
     @PostMapping("/register")
-    public String register(BoardVO board, RedirectAttributes rttr) {
+    public String register(BoardVO board, MultipartFile uploadFile, RedirectAttributes rttr) {
         log.info("register: " + board);
+
+        // 파일이 첨부되었다면 저장 로직 실행
+        if (uploadFile != null && !uploadFile.isEmpty()) {
+            String uploadFileName = uploadFile.getOriginalFilename();
+            
+            // 파일명 중복 방지를 위해 UUID(랜덤 문자열) 붙이기
+            String uuid = UUID.randomUUID().toString();
+            uploadFileName = uuid + "_" + uploadFileName;
+
+            try {
+                // 폴더에 파일 저장
+                File saveFile = new File(UPLOAD_FOLDER, uploadFileName);
+                uploadFile.transferTo(saveFile); 
+                
+                // DB에 저장할 파일명 세팅 (BoardVO에 fileName 필드가 있어야 함)
+                board.setFileName(uploadFileName); 
+                
+            } catch (Exception e) {
+                log.error("파일 업로드 실패: " + e.getMessage());
+            }
+        }
+
         service.register(board);
         rttr.addFlashAttribute("result", board.getBno());
         return "redirect:/board/list";
@@ -72,11 +106,51 @@ public class BoardController {
     @PostMapping("/remove")
     public String remove(@RequestParam("bno") Long bno, Criteria cri, RedirectAttributes rttr) {
         log.info("remove..." + bno);
+        // [참고] 파일 삭제 로직은 복잡해질까봐 일단 제외했습니다. DB 데이터만 삭제합니다.
         if (service.remove(bno)) {
             rttr.addFlashAttribute("result", "success");
         }
         rttr.addAttribute("page", cri.getPage());
         rttr.addAttribute("perPageNum", cri.getPerPageNum());
         return "redirect:/board/list";
+    }
+
+    // [추가됨] 이미지 화면 출력 기능
+    @GetMapping("/display")
+    @ResponseBody
+    public ResponseEntity<byte[]> getFile(String fileName) {
+        log.info("이미지 출력 요청: " + fileName);
+        File file = new File(UPLOAD_FOLDER + "\\" + fileName);
+        ResponseEntity<byte[]> result = null;
+
+        try {
+            HttpHeaders header = new HttpHeaders();
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+            result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    // [추가됨] 게시글 신고 기능
+    @PostMapping("/report")
+    public String report(Long bno, String userId, Criteria cri, RedirectAttributes rttr) {
+        log.info("게시글 신고: bno=" + bno + ", user=" + userId);
+
+        // 서비스의 report 메서드 호출 (Service 수정 필요)
+        boolean result = service.report(bno, userId);
+
+        if (result) {
+            rttr.addFlashAttribute("msg", "신고가 정상적으로 접수되었습니다.");
+        } else {
+            rttr.addFlashAttribute("msg", "이미 신고한 게시글입니다.");
+        }
+
+        rttr.addAttribute("bno", bno);
+        rttr.addAttribute("page", cri.getPage());
+        rttr.addAttribute("perPageNum", cri.getPerPageNum());
+        
+        return "redirect:/board/get";
     }
 }

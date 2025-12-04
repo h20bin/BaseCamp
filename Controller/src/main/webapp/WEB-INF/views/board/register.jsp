@@ -162,26 +162,31 @@
         <div class="form-card">
             <h2 class="page-title">게시글 작성</h2>
 
-            <form action="/board/register" method="post">
+            <form action="/board/register" method="post" enctype="multipart/form-data">
                 
                 <div class="mb-4">
-                    <label for="title" class="form-label">제목</label>
+                    <label for="title" class="form-label">제목 <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력해 주세요." required>
                 </div>
 
                 <div class="mb-4">
                     <label for="writer" class="form-label">작성자</label>
                     
-                    <input type="text" class="form-control" id="writer" 
+                    <input type="text" class="form-control" id="writer" name="writer" 
                            value="${loginUser.userName}" readonly>
                            
                     <input type="hidden" name="userId" value="${loginUser.userId}">
-                    
-                    </div>
+                </div>
 
                 <div class="mb-4">
-                    <label for="content" class="form-label">내용</label>
-                    <textarea class="form-control" id="content" name="content" placeholder="내용을 자유롭게 작성해 주세요."></textarea>
+                    <label for="content" class="form-label">내용 <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="content" name="content" placeholder="내용을 자유롭게 작성해 주세요." required></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label for="uploadFile" class="form-label">이미지 첨부 (선택)</label>
+                    <input type="file" class="form-control" id="uploadFile" name="uploadFile" accept="image/*">
+                    <div class="form-text text-muted">jpg, png, gif 파일만 업로드 가능합니다.</div>
                 </div>
 
                 <div class="row g-2 mt-4">

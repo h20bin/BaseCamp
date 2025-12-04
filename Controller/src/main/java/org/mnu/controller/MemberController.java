@@ -35,18 +35,20 @@ public class MemberController {
         return "member/signup";
     }
 
-    // 2. 회원가입 처리 (중복 아이디 에러 처리 추가됨)
+    // 2. 회원가입 처리 (수정됨: 관심 구단 미선택 시 T9999 자동 입력)
     @PostMapping("/member/signup")
     public String signup(MemberVO member, String favPlayerId1, String favPlayerId2, String favPlayerId3, RedirectAttributes rttr) {
         log.info("회원가입 요청: " + member);
 
+        // 비밀번호 유효성 검사
         if (!member.getUserPw().matches("^(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$")) {
             rttr.addFlashAttribute("msg", "비밀번호는 8자리 이상, 특수문자를 포함해야 합니다.");
             return "redirect:/member/signup"; 
         }
 
+        // [수정된 부분] 관심 구단을 선택하지 않았다면 'T9999'(미선택)로 강제 설정
         if (member.getFavTeamId() == null || member.getFavTeamId().isEmpty()) {
-            member.setFavTeamId(null);
+            member.setFavTeamId("T9999"); 
         }
 
         List<String> favPlayerIds = new ArrayList<>();
@@ -59,13 +61,11 @@ public class MemberController {
             service.register(member, favPlayerIds);
             
         } catch (org.springframework.dao.DuplicateKeyException e) {
-            // [수정됨] 아이디 중복 시 500 에러 대신 메시지 출력
             log.error("아이디 중복 발생: " + member.getUserId());
             rttr.addFlashAttribute("msg", "이미 사용 중인 아이디입니다. 다른 아이디를 사용해주세요.");
             return "redirect:/member/signup"; 
             
         } catch (RuntimeException e) {
-            // 3개월 제한 등 기타 에러 처리
             rttr.addFlashAttribute("msg", e.getMessage());
             return "redirect:/member/signup";
         }
@@ -125,7 +125,6 @@ public class MemberController {
     public String modifyProcess(MemberVO member, RedirectAttributes rttr, HttpSession session) {
         log.info("정보 수정 요청: " + member);
         
-        // [수정됨] 주석 해제하여 실제 수정 기능 동작하게 함
         service.modify(member); 
         
         // 세션 갱신
@@ -135,7 +134,7 @@ public class MemberController {
         return "redirect:/";
     }
 
-    // 8. 회원 탈퇴 처리 (사유 포함)
+    // 8. 회원 탈퇴 처리
     @PostMapping("/member/remove")
     public String remove(String userPw, String withdrawalReason, HttpSession session, RedirectAttributes rttr) {
         MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
@@ -144,7 +143,6 @@ public class MemberController {
         
         if(loginUser.getUserPw().equals(userPw)) {
             try {
-                // [수정됨] 사유(withdrawalReason)까지 서비스로 전달
                 service.remove(loginUser);
                 
                 session.invalidate(); // 탈퇴 성공 시 로그아웃
