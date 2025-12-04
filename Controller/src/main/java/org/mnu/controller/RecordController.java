@@ -30,4 +30,9 @@ public class RecordController {
         model.addAttribute("batterList", service.getBatterRankings());
         model.addAttribute("pitcherList", service.getPitcherRankings());
     }
+    
+    @GetMapping("/record/list")
+    public String recordList() {
+        return "record/list";
+    }
 }

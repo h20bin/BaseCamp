@@ -28,7 +28,6 @@
                             <td>${team.wins}</td>
                             <td>${team.draws}</td>
                             <td>${team.losses}</td>
-                            <td>${team.losses}</td>
                             <td>${team.winRate}</td>
                             <td>${team.teamAvg}</td>
                         </tr>
