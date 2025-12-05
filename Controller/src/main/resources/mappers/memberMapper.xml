@@ -6,8 +6,8 @@
 <mapper namespace="org.mnu.mapper.MemberMapper">
 
     <insert id="insertMember">
-        INSERT INTO USER_INFO (USER_ID, PASSWORD, NAME, NICKNAME, EMAIL, PHONE, FAV_TEAM_ID)
-        VALUES (#{userId}, #{userPw}, #{userName}, #{nickName}, #{email}, #{phone}, #{favTeamId})
+        INSERT INTO USER_INFO (USER_ID, PASSWORD, NAME, NICKNAME, EMAIL, PHONE, FAV_TEAM_ID, ENABLED, WARNING_CNT)
+        VALUES (#{userId}, #{userPw}, #{userName}, #{nickName}, #{email}, #{phone}, #{favTeamId}, 1, 0)
     </insert>
 
     <select id="read" resultType="org.mnu.domain.MemberVO">
@@ -15,7 +15,9 @@
             USER_ID as userId, PASSWORD as userPw, NAME as userName, NICKNAME as nickName, 
             EMAIL, PHONE, FAV_TEAM_ID as favTeamId,
             AUTH,
-            WARNING_CNT as warningCnt,  BAN_UNTIL as banUntil       FROM USER_INFO 
+            WARNING_CNT as warningCnt,  BAN_UNTIL as banUntil,
+            ENABLED as enabled
+        FROM USER_INFO 
         WHERE USER_ID = #{userId}
     </select>
     
@@ -24,7 +26,9 @@
             USER_ID as userId, PASSWORD as userPw, NAME as userName, NICKNAME as nickName, 
             EMAIL, PHONE, FAV_TEAM_ID as favTeamId,
             AUTH,
-            WARNING_CNT as warningCnt,  BAN_UNTIL as banUntil       FROM USER_INFO 
+            WARNING_CNT as warningCnt,  BAN_UNTIL as banUntil,
+            ENABLED as enabled
+        FROM USER_INFO 
         WHERE USER_ID = #{userId} AND PASSWORD = #{userPw}
     </select>
 

@@ -17,10 +17,18 @@ public class AdminServiceImpl {
 
     @Transactional
     public String giveWarning(String userId, Long bno) {
+        
+        // ★ [핵심 수정] 작성자 ID가 없는 경우(옛날 글) 에러 방지
+        // ID가 없으면 경고나 쪽지를 보낼 수 없으므로, 게시글만 삭제하고 종료합니다.
+        if (userId == null || userId.trim().isEmpty()) {
+            boardMapper.delete(bno);
+            return "작성자 정보(ID)가 없는 게시글입니다. 경고 없이 삭제만 처리되었습니다.";
+        }
+
         // 1. 유저 경고 횟수 증가
         memberMapper.increaseWarningCnt(userId);
         
-        // 2. 현재 경고 횟수 가져오기 (★수정됨: Null 처리 추가)
+        // 2. 현재 경고 횟수 가져오기 (Null 처리)
         Integer resultArgs = memberMapper.getWarningCnt(userId);
         
         // DB에서 null이 오면 0으로 처리, 아니면 해당 값 사용

@@ -166,8 +166,8 @@
         .btn-warn:hover { background-color: #bb2d3b; color: white; }
 
         /* ========================
-           [추가됨] 댓글 스타일 
-           ======================== */
+            [추가됨] 댓글 스타일 
+            ======================== */
         .reply-card {
             background: #f8f9fa;
             border-radius: 16px;
@@ -356,7 +356,9 @@
                 <c:if test="${loginUser.auth eq 'ROLE_ADMIN'}">
                     <form action="/board/admin/warn" method="post" style="display:inline;" onsubmit="return confirm('🚨 관리자 권한 경고\n\n해당 유저에게 경고(1회 증가)를 부여하고\n게시글을 즉시 삭제하시겠습니까?');">
                         <input type="hidden" name="bno" value="${board.bno}">
-                        <input type="hidden" name="userId" value="${board.writer}"> 
+                        
+                        <input type="hidden" name="userId" value="${board.userId}"> 
+                        
                         <button type="submit" class="btn-action btn-warn">
                             <i class="fa-solid fa-gavel"></i> 경고/삭제
                         </button>
@@ -427,7 +429,7 @@
         }
 
         // ===================================
-        // [추가됨] 댓글 처리 자바스크립트 (Ajax)
+        // 댓글 처리 자바스크립트 (Ajax)
         // ===================================
         $(document).ready(function() {
             var bnoValue = '<c:out value="${board.bno}"/>';
