@@ -18,7 +18,7 @@
         .btn-auth-group { display: flex; gap: 10px; align-items: center; }
         .user-welcome { font-weight: 600; font-size: 15px; color: #191f28; margin-right: 10px; }
         .user-welcome span { color: #3182f6; font-weight: 800; }
-        .btn-ghost { color: #333 !important; font-weight: 600; font-size: 15px; background: transparent; border: none; padding: 8px 12px; text-decoration: none; transition: color 0.2s; }
+        .btn-ghost { color: #333 !important; font-weight: 600; font-size: 15px; background: transparent; border: none; padding: 8px 12px; text-decoration: none; transition: color 0.2s; position: relative; }
         .btn-ghost:hover { color: #3182f6 !important; }
         .btn-primary-fill { background-color: #3182f6 !important; color: #ffffff !important; font-weight: 600; font-size: 15px; padding: 10px 24px; border-radius: 8px; border: none; text-decoration: none; box-shadow: 0 2px 5px rgba(49, 130, 246, 0.3); display: inline-block; transition: background-color 0.2s; }
         .btn-primary-fill:hover { background-color: #1b64da !important; }
@@ -32,14 +32,12 @@
         .btn-white { background-color: white; color: #191f28; border: 1px solid #e5e8eb; }
         .btn-white:hover { background-color: #f9fafb; color: #3182f6; border-color: #3182f6; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
         
-        /* 팀 정보 카드 스타일 */
         .team-card { background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 600px; margin-bottom: 30px; }
         .team-stat-item { flex: 1; }
         .team-stat-label { font-size: 14px; color: #8b95a1; margin-bottom: 5px; }
         .team-stat-value { font-size: 32px; font-weight: 800; color: #191f28; }
         .team-stat-divider { width: 1px; height: 50px; background-color: #e5e8eb; margin: 0 20px; }
 
-        /* 선수 정보 카드 스타일 (추가됨) */
         .player-cards-wrapper { display: flex; gap: 20px; justify-content: center; margin-bottom: 50px; flex-wrap: wrap; }
         .player-card { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 220px; text-align: left; border: 1px solid #e5e8eb; transition: transform 0.2s; }
         .player-card:hover { transform: translateY(-5px); }
@@ -50,6 +48,25 @@
         .stat-value { font-size: 22px; font-weight: 800; color: #3182f6; }
 
         footer { text-align: center; font-size: 12px; color: #ddd; padding: 20px; }
+
+        /* [수정] 알림창 관련 스타일 추가 */
+        .notification-menu { width: 380px; border-radius: 16px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.1); padding: 0; overflow: hidden; margin-top: 10px; }
+        .notification-header { padding: 15px 20px; border-bottom: 1px solid #f1f3f5; font-weight: 700; color: #333; display: flex; justify-content: space-between; align-items: center; }
+        .notification-item { display: flex; padding: 15px 20px; gap: 15px; border-bottom: 1px solid #f8f9fa; transition: background 0.2s; text-decoration: none; color: inherit; align-items: flex-start; }
+        .notification-item:hover { background-color: #f8f9fa; color: inherit; }
+        .notification-item:last-child { border-bottom: none; }
+        
+        /* 읽지 않은 알림 배경색 (약한 파란색) */
+        .notification-item.unread { background-color: #f0f7ff; } 
+        
+        .noti-icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+        .noti-content { flex: 1; }
+        .noti-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: #333; }
+        .noti-text { font-size: 13px; color: #6b7684; line-height: 1.4; margin-bottom: 6px; }
+        .noti-time { font-size: 12px; color: #adb5bd; }
+
+        /* 알림 배지 (빨간 점) */
+        .badge-dot { position: absolute; top: 6px; right: 8px; width: 6px; height: 6px; background-color: #ff3b30; border-radius: 50%; border: 2px solid #fff; box-sizing: content-box; }
     </style>
 </head>
 <body>
@@ -68,8 +85,43 @@
                     </c:when>
 
                     <c:otherwise>
+                        <div class="dropdown me-2">
+                            <button class="btn-ghost border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 10px;">
+                                <i class="fa-regular fa-bell fa-lg"></i>
+                                <span class="badge-dot"></span>
+                            </button>
+                            
+                            <div class="dropdown-menu dropdown-menu-end notification-menu">
+                                <div class="notification-header">
+                                    <span>알림</span>
+                                    <a href="#" style="font-size: 12px; text-decoration: none; color: #868e96;">모두 읽음</a>
+                                </div>
+
+                                <a href="/board/view?id=101" class="notification-item unread">
+                                    <div class="noti-icon-box bg-success bg-opacity-10 text-success">
+                                        <i class="fa-solid fa-comment-dots"></i>
+                                    </div>
+                                    <div class="noti-content">
+                                        <div class="noti-title">내 글에 새로운 댓글</div>
+                                        <div class="noti-text">작성하신 <strong>기아 타이거즈 승률</strong> 게시물에 '기아타이거즈V12'님이 댓글을 남겼습니다.</div>
+                                        <div class="noti-time">방금 전</div>
+                                    </div>
+                                </a>
+
+                                <a href="/game/result?id=205" class="notification-item unread">
+                                    <div class="noti-icon-box bg-primary bg-opacity-10 text-primary">
+                                        <i class="fa-solid fa-trophy"></i>
+                                    </div>
+                                    <div class="noti-content">
+                                        <div class="noti-title">경기 결과 업데이트</div>
+                                        <div class="noti-text">관심 구단 <strong>[KIA 타이거즈]</strong>가 4:3으로 승리하였습니다!</div>
+                                        <div class="noti-time">13시간 전</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                         <span class="user-welcome">
-                            <span>${loginUser.nickName}</span>님, 환영합니다!
+                            <span>${loginUser.nickName}</span>님
                         </span>
                         <a href="/member/logout" class="btn-ghost">로그아웃</a>
                     </c:otherwise>
@@ -81,9 +133,7 @@
     <div class="main-container">
         
         <c:choose>
-            <%-- Case 1: 로그인 + 관심구단(myTeam) 정보 있음 --%>
             <c:when test="${not empty loginUser and not empty myTeam}">
-                
                 <div class="mb-4">
                     <span class="badge bg-primary bg-opacity-10 text-primary mb-2 rounded-pill px-3 py-2 fw-bold">MY TEAM</span>
                     <h1 class="main-title" style="font-size: 40px; margin-bottom: 10px;">
@@ -108,11 +158,6 @@
                             <div class="team-stat-value">${myTeam.teamAvg}</div>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-top text-center">
-                        <a href="/record/team?id=${myTeam.teamId}" class="text-decoration-none fw-bold" style="color: #3182f6;">
-                            상세 기록 확인하기 <i class="fa-solid fa-chevron-right ms-1"></i>
-                        </a>
-                    </div>
                 </div>
 
                 <c:if test="${not empty myPlayers}">
@@ -134,10 +179,8 @@
                         </c:forEach>
                     </div>
                 </c:if>
-
             </c:when>
 
-            <%-- Case 2: 로그인 안 함 or 관심구단 없음 --%>
             <c:otherwise>
                 <h1 class="main-title">
                     야구 데이터와 커뮤니티가<br>
@@ -163,11 +206,9 @@
             <a href="/record/list" class="btn-lg-custom btn-blue">
                 <i class="fa-solid fa-chart-simple"></i> 선수 기록 보러가기
             </a>
-
             <a href="/board/list" class="btn-lg-custom btn-white">
                 <i class="fa-solid fa-comments"></i> 자유게시판 바로가기
             </a>
-
             <c:if test="${not empty loginUser}">
                 <a href="/member/modify" class="btn-lg-custom btn-white" style="color:#555;">
                     <i class="fa-solid fa-gear"></i> 내 정보 수정
