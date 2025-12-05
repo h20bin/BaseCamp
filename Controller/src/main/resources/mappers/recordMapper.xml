@@ -53,12 +53,13 @@
         ORDER BY TEAM_NAME ASC
     </select>
 
-    <select id="getAllPlayers" resultType="org.mnu.domain.PlayerDTO">
+	<select id="getAllPlayers" resultType="org.mnu.domain.PlayerDTO">
         SELECT 
             T1.PLAYER_ID as playerId, 
-            T1.NAME, 
+            T1.NAME as name, 
             T2.TEAM_NAME as teamName, 
-            '타자' AS playerType 
+            T1.POSITION as position,   '타자' AS playerType,
+            T1.AVG as avg,             T1.HOMERUN as homerun,     NULL as era,               NULL as strikeouts
         FROM BATTER T1
         JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
 
@@ -66,10 +67,11 @@
 
         SELECT 
             T1.PLAYER_ID as playerId, 
-            T1.NAME, 
+            T1.NAME as name, 
             T2.TEAM_NAME as teamName, 
-            '투수' AS playerType 
-        FROM PITCHER T1
+            '투수' as position,        '투수' AS playerType,
+            NULL as avg,               NULL as homerun,
+            T1.ERA as era,             T1.STRIKEOUTS as strikeouts FROM PITCHER T1
         JOIN TEAM T2 ON T1.TEAM_ID = T2.TEAM_ID
 
         ORDER BY NAME ASC
