@@ -17,7 +17,7 @@
         WHERE team_id != 'T9999'
         ORDER BY rank_no ASC
     </select>
-
+    
     <select id="getBatterRank" resultType="org.mnu.domain.BatterVO">
         SELECT 
             b.player_id as playerId, 
@@ -43,9 +43,9 @@
             TEAM_ID as teamId, 
             TEAM_NAME as teamName,
             RANK_NO as rankNo,  
-            WINS,      
-            DRAWS,     
-            LOSSES,    
+            WINS,       
+            DRAWS,      
+            LOSSES,     
             WIN_RATE as winRate, 
             TEAM_AVG as teamAvg 
         FROM TEAM
@@ -111,6 +111,21 @@
         JOIN PITCHER p ON ui.player_id = p.player_id
         JOIN TEAM t ON p.team_id = t.team_id
         WHERE ui.user_id = #{userId}
+    </select>
+
+    <select id="getGameList" resultType="org.mnu.domain.GameVO">
+        SELECT 
+            g.GAME_ID as gameId,
+            TO_DATE(SUBSTR(g.GAME_ID, 2, 8), 'YYYYMMDD') as gameDate,
+            t1.TEAM_NAME as homeTeamName,
+            g.SCORE as homeScore,  
+            t2.TEAM_NAME as awayTeamName
+        FROM GAME_RECORD g
+        LEFT JOIN PITCHER p1 ON g.WIN_PITCHER = p1.PLAYER_ID
+        LEFT JOIN TEAM t1 ON p1.TEAM_ID = t1.TEAM_ID
+        LEFT JOIN PITCHER p2 ON g.LOSE_PITCHER = p2.PLAYER_ID
+        LEFT JOIN TEAM t2 ON p2.TEAM_ID = t2.TEAM_ID
+        ORDER BY gameDate DESC
     </select>
 
 </mapper>

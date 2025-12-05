@@ -2,26 +2,21 @@ package org.mnu.service;
 
 import java.util.List;
 import org.mnu.domain.BatterVO;
+import org.mnu.domain.GameVO; // GameVO 임포트 확인
 import org.mnu.domain.PitcherVO;
 import org.mnu.domain.PlayerDTO;
 import org.mnu.domain.TeamVO;
 
 public interface RecordService {
-    
     public List<TeamVO> getTeamRankings();
-    
     public List<BatterVO> getBatterRankings();
-    
     public List<PitcherVO> getPitcherRankings();
-    
     public List<TeamVO> getAllTeams();
-    
     public List<PlayerDTO> getAllPlayers();
-
-    // ▼▼▼ [수정] 반드시 TeamVO여야 합니다 (Object X) ▼▼▼
+    
     public TeamVO getTeam(String favTeamId);
- // 맨 아래에 추가
-    public List<PlayerDTO> getInterestPlayers1(String userId);
+    public List<PlayerDTO> getInterestPlayers(String userId);
 
-	public Object getInterestPlayers(String userId);
+    // [추가] 경기 기록 조회
+    public List<GameVO> getGameList();
 }

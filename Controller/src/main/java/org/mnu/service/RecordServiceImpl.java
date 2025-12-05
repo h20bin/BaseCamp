@@ -3,6 +3,7 @@ package org.mnu.service;
 import java.util.List;
 
 import org.mnu.domain.BatterVO;
+import org.mnu.domain.GameVO;
 import org.mnu.domain.PitcherVO;
 import org.mnu.domain.PlayerDTO;
 import org.mnu.domain.TeamVO;
@@ -62,9 +63,10 @@ public class RecordServiceImpl implements RecordService {
         return mapper.getInterestPlayers(userId);
     }
 
-	@Override
-	public List<PlayerDTO> getInterestPlayers1(String userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    // [추가 구현]
+    @Override
+    public List<GameVO> getGameList() {
+        log.info("경기 기록 조회 (Service)");
+        return mapper.getGameList();
+    }
 }
