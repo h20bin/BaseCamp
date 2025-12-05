@@ -45,8 +45,8 @@ public class BoardController {
     @GetMapping("/list")
     public void list(Criteria cri, Model model) {
         
-        // ★ [수정됨] 잘못된 캐스팅((HttpHeaders)) 제거 및 null 체크 수정
-        if (cri.getCategory() == null || cri.getCategory().isEmpty()) {
+        // ★ [수정됨] URL에 "null" 텍스트가 들어오거나 값이 비었을 경우 'FREE'로 강제 설정
+        if (cri.getCategory() == null || cri.getCategory().trim().isEmpty() || "null".equals(cri.getCategory())) {
             cri.setCategory("FREE");
         }
 
@@ -90,8 +90,8 @@ public class BoardController {
             board.setIsNotice("N");
         }
         
-        // ★ [수정됨] 잘못된 캐스팅 제거
-        if(board.getCategory() == null || ((HttpHeaders) board.getCategory()).isEmpty()) {
+        // ★ [수정됨] 잘못된 캐스팅 제거 및 카테고리 NULL 체크
+        if(board.getCategory() == null || ((String) board.getCategory()).trim().isEmpty()) {
             board.setCategory("FREE");
         }
 
@@ -113,7 +113,7 @@ public class BoardController {
         service.register(board);
         rttr.addFlashAttribute("result", board.getBno());
         
-        // 작성한 카테고리 목록으로 이동
+        // 작성한 카테고리 목록으로 이동 (위에서 FREE로 설정했으므로 null이 붙지 않음)
         return "redirect:/board/list?category=" + board.getCategory(); 
     }
 

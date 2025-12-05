@@ -99,7 +99,7 @@
             fileName, 
             REPORT_CNT as reportCnt, 
             IS_NOTICE as isNotice, 
-            CATEGORY  /* ★ 이게 빠져 있어서 에러가 났을 겁니다 */
+            CATEGORY  
         FROM BOARD
         WHERE bno = #{bno}
     </select>

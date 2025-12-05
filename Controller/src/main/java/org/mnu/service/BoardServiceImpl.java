@@ -52,7 +52,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public int getTotal() {
         log.info("get total count");
-        return mapper.getTotalCount();
+        return mapper.getTotalCount(null);
     }
 
     // ★ [추가됨] 신고 기능 구현
