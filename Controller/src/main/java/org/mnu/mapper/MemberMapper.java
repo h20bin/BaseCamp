@@ -1,9 +1,9 @@
 package org.mnu.mapper;
 
-import java.util.List; // ★ 추가됨
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.mnu.domain.MemberVO;
-import org.mnu.domain.MessageVO; // ★ 추가됨 (1단계에서 만든 VO)
+import org.mnu.domain.MessageVO;
 
 public interface MemberMapper {
     
@@ -33,8 +33,9 @@ public interface MemberMapper {
     // 8. 경고 횟수 증가
     public void increaseWarningCnt(String userId);
 
-    // 9. 현재 경고 횟수 조회
-    public int getWarningCnt(String userId);
+    // 9. 현재 경고 횟수 조회 (★수정됨: int -> Integer)
+    // DB에서 null이 넘어올 경우를 대비해 Integer로 변경
+    public Integer getWarningCnt(String userId);
 
     // 10. 활동 정지 처분
     public void suspendMember(@Param("userId") String userId, @Param("days") int days);
@@ -45,6 +46,6 @@ public interface MemberMapper {
     // 12. 쪽지 발송
     public void sendMessage(@Param("targetId") String targetId, @Param("senderId") String senderId, @Param("content") String content);
 
-    // ★ [추가됨] 13. 내 쪽지 목록 가져오기
+    // 13. 내 쪽지 목록 가져오기
     public List<MessageVO> getMyMessages(String userId);
 }

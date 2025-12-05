@@ -58,12 +58,12 @@
 
     <update id="increaseWarningCnt">
         UPDATE USER_INFO 
-        SET WARNING_CNT = WARNING_CNT + 1 
+        SET WARNING_CNT = NVL(WARNING_CNT, 0) + 1 
         WHERE USER_ID = #{userId}
     </update>
 
     <select id="getWarningCnt" resultType="int">
-        SELECT WARNING_CNT FROM USER_INFO WHERE USER_ID = #{userId}
+        SELECT NVL(WARNING_CNT, 0) FROM USER_INFO WHERE USER_ID = #{userId}
     </select>
 
     <update id="suspendMember">

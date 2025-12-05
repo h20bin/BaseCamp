@@ -20,8 +20,12 @@ public class AdminServiceImpl {
         // 1. 유저 경고 횟수 증가
         memberMapper.increaseWarningCnt(userId);
         
-        // 2. 현재 경고 횟수 가져오기
-        int cnt = memberMapper.getWarningCnt(userId);
+        // 2. 현재 경고 횟수 가져오기 (★수정됨: Null 처리 추가)
+        Integer resultArgs = memberMapper.getWarningCnt(userId);
+        
+        // DB에서 null이 오면 0으로 처리, 아니면 해당 값 사용
+        int cnt = (resultArgs == null) ? 0 : resultArgs; 
+        
         String msg = "";
 
         // 3. 경고 횟수에 따른 처분 로직
